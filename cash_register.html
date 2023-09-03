@@ -2,7 +2,7 @@
 <head>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8">	
 <style type="text/css">
-button.fee-key, button.payment-key, button.command-key, button.auxiliary-key, button.dept-key, button.tax-key
+button.fee-key, button.payment-key, button.command-key, button.auxiliary-key, button.dept-key, button.tax-key, button.clerk-id-key
 {
 	width:60px;
 	height:60px;
@@ -16,10 +16,19 @@ button.white-bg
 {
 	background-color:white;
 }
+button.yellow-bg
+{
+	background-color:yellow;
+}
 button.number-key
 {
 	width:40px;
 	height:40px;
+}
+button.clerk-id-key
+{
+	background-color:orange;
+	color:white
 }
 button.total-key
 {
@@ -27,13 +36,6 @@ button.total-key
 	height:60px;
 	background-color:red;
 	color:white;
-}
-button.clerk-id-key
-{
-	width:60px;
-	height:60px;
-	background-color:orange;
-	color:white
 }
 
 #receipt 
@@ -45,13 +47,34 @@ button.clerk-id-key
 	float:left;
 	overflow-y:scroll;
 }
-p.receipt-header {text-align:center;}
-p.receipt-clerkin {text-align:left;}
-p.receipt-items {text-align:justify;}
-p.receipt-totals {text-align:justify}
-p.receipt-timestamp {text-align:right;}
-p.receipt-footer {text-align:center;}
+.receipt-header {text-align:center;}
+.receipt-clerkin {
+	text-align:left;
+	position:relative;
+}
+.receipt-items {
+	text-align:justify;
+	position:relative;
+}
+.receipt-totals {
+	text-align:justify;
+	position:relative;
+}
+.receipt-timestamp {text-align:right;}
+.receipt-footer {text-align:center;}
 
+.left-side {
+   position:absolute;
+   left: 0;
+   width: 50%;
+   }
+
+.right-side {
+   position:absolute;
+   right: 0;
+   width: 50%;
+   text-align: right; /* depends on element width */
+   } 
 #customer-display-upper
 {
 	height:70px;
@@ -178,7 +201,8 @@ function PlayErrorTone() {
     document.getElementById('ErrorTone').play();
 }
 function StopErrorTone() {
-    document.getElementById('ErrorTone').stop();
+    document.getElementById('ErrorTone').pause();
+    document.getElementById('ErrorTone').currentTime = 0;
 }
 function PressKey(KeyId, KeyNum) {
 	PrevKeyId = NextPrevKeyId; //I could do this at the end, but that would mean restructuring the whole flow
@@ -196,10 +220,8 @@ function PressKey(KeyId, KeyNum) {
 		return false;
 		}
 	}
-//	if ( ! InArray(KeyId, AcceptableKeyIds)) {
-//		ErrorState = true;
-//		AppendDisplay('customer-display-upper', 'ERROR');
-//		PlayErrorTone();
+//	if ( ! InArray(KeyId, AcceptableKeyIds && ClerkedIn == true)) {
+//		ThrowCashRegError()
 //		return false;
 //	}
 
@@ -217,7 +239,7 @@ function PressKey(KeyId, KeyNum) {
 		Qty = 1;//todo:make this generic
 		TotalCost += parseFloat(ItemPrice[KeyId]) * Qty; //todo:fix this for more quantities and things like printing
 		SetDisplay('customer-display-upper', KeyId);
-		SetDisplay('customer-display-lower', KeyNum+ "      "+ItemPrice[KeyId]);
+		SetDisplay('customer-display-lower', KeyNum+ "      "+ItemPrice[KeyId]);//todo: fix this spacing kludge with real spans: http://www.communitymx.com/content/article.cfm?cid=529b0
 		AppendDisplay('receipt', '<p class="receipt-items">'+ReceiptString[KeyId]+'</p>');
 		return true;
 		}
@@ -228,13 +250,12 @@ function PressKey(KeyId, KeyNum) {
 		case "Clear" :
 			ClearDisplay('customer-display-upper');
 			ClearDisplay('customer-display-lower');
-			//todo: clear the display, since ErrorState should have been caught before this
 			break;
 		case "Void" :
 			//todo: figure out this whole business
 			break;
 		case "Feed" :
-			//todo: add a <br> to the receipt
+			AppendDisplay('receipt', '<br>');
 			break;
 		case "Clerk ID" :
 			ClerkId = parseInt(document.getElementById('customer-display-lower').innerHTML);
@@ -247,9 +268,13 @@ function PressKey(KeyId, KeyNum) {
 				SetDisplay('customer-display-lower', ClerkId + "      000"); //todo:fix this spacing kludge
 				PrintReceiptHeader(EmployeeName[ClerkId]);
 				ClerkedIn = true;
+				AcceptableKeyIds = AcceptableKeyIds.concat(NumKeyIds,ItemKeyIds);
 			}
 			else {
-			alert("Bad Pin");
+				if (EnteringPin === false && ClerkedIn === false && (EnteredPin != EmployeePin[ClerkId])) {
+					alert("Bad Pin");
+					return false;
+				}
 			}
 			break;
 		case "Subtotal" :
@@ -258,10 +283,12 @@ function PressKey(KeyId, KeyNum) {
 			//.S 106.91
 			break;
 		case "PAY CASH" :
+			//calculate change, update displays and receipt, clock out
 			break;
 		default :
 			//Some other key--don't worry about it?
 			return true;
+		return true; //switch statement ends here
 	}
 }
 
@@ -269,10 +296,11 @@ function play_single_sound() {
     document.getElementById('audiotag1').play();
 }
 function stop_single_sound() {
-    document.getElementById('audiotag1').stop();
+    document.getElementById('audiotag1').pause();
+    document.getElementById('audiotag1').currentTime = 0;
 }
 </script> 
-<title>Media Services Cash Register Emulator v0.31</title>
+<title>Media Services Cash Register Emulator v0.34</title>
 </head>
 <body>
 <noscript>This emulator uses Javascript. Your browser either doesn't support Javascript or you have it turned off.</noscript>
@@ -288,13 +316,13 @@ function stop_single_sound() {
 	<tr>
 		<td> 
 			<div id="receipt">
-			<p class="receipt-header">MEDIA SERVICES<br>Olin Hall room 032<br>507 933 7459<br>mediaservices@gac.edu</p>
-			<p class="receipt-clerkin">01-01-2011&nbsp;&nbsp;&nbsp;&nbsp;MC #:0000<br>ZAPHOD B</p>
-			<p class="receipt-items">PASSPORT *5.00T1</p>
-			<p class="receipt-items">PASSPORT *5.00T1</p>
-			<p class="receipt-totals">------------------------<br><b>TOTAL</b>*5.34<br>AMOUNT *6.00<br>CHANGE *0.66</p>
-			<p class="receipt-timestamp">PM 3-31   ****</p>
-			<p class="receipt-footer">Thank you for visiting! <br>Please let us know how <br>we are doing.</p>
+			<div class="receipt-header">MEDIA SERVICES<br>Olin Hall room 032<br>507 933 7459<br>mediaservices@gac.edu<br><br><br><br></div>
+			<div class="receipt-clerkin">01-01-2011<span class="right-side">MC #:0000&nbsp;&nbsp;</span><br>ZAPHOD B<br></div>
+			<div class="receipt-items">PASSPORT <span class="right-side">*5.00T1</span><br></div>
+			<div class="receipt-items">PASSPORT <span class="right-side">*5.00T1</span><br></div>
+			<div class="receipt-totals">------------------------<br><b>TOTAL</b><span class="right-side">*5.34&nbsp;&nbsp;</span><br>AMOUNT<span class="right-side">*6.00&nbsp;&nbsp;</span><br>CHANGE<span class="right-side">*0.66&nbsp;&nbsp;</span><br></div>
+			<div class="receipt-timestamp">PM 3-31&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;<br></div>
+			<div class="receipt-footer">Thank you for visiting! <br>Please let us know how <br>we are doing.</div>
 			</div>
 		</td>
 		<td>
@@ -341,7 +369,7 @@ function stop_single_sound() {
 			<table id="CommandKeys" border="1" align=center>
 				<tr>
 					<td><button class="command-key">Coupon</button></td>
-					<td><button class="command-key"style="background-color:yellow">Entered&nbsp;Itm<br>Quantity<br>QTY</button></td>
+					<td><button class="command-key yellow-bg" onClick="PressKey('Void')">Entered&nbsp;Itm<br>Quantity<br>QTY</button></td>
 				</tr>
 				<tr>
 					<td><button class="command-key">Account<br>Receive</button></td>
@@ -353,7 +381,7 @@ function stop_single_sound() {
 				</tr>
 				<tr>
 					<td><button class="command-key white-bg" onClick="PressKey('Clear')">Clear</button></td>
-					<td><button class="command-key white-bg">Void</button></td>
+					<td><button class="command-key white-bg" onClick="PressKey('Void')">Void</button></td>
 				</tr>
 			</table>
 		</td>
@@ -477,7 +505,7 @@ function stop_single_sound() {
 					<td><button class="payment-key">Items<br>Subtotal<br>No&nbsp;Sale</button></td>
 				</tr>
 				<tr>
-					<td colspan="2"><button class="total-key" onclick="javascript:play_single_sound();">Amount&nbsp;Tend&nbsp;Total<br>PAY&nbsp;CASH</button></td>
+					<td colspan="2"><button class="total-key" onClick="PressKey('PAY CASH')">Amount&nbsp;Tend&nbsp;Total<br>PAY&nbsp;CASH</button></td>
 				</tr>
 			</table>
 		</td>
