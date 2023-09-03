@@ -1,4 +1,5 @@
 figure out why the "clear receipt" and "debug" buttons refresh the page
+fix the CSS styling issues to make the font colors more readable
 
 
 Behavior checks--to check with actual register.
