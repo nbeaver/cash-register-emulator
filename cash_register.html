@@ -66,6 +66,7 @@ button.cash-drawer
     position:relative;
 }
 .receipt-timestamp {text-align:right;}
+.receipt-right-align {text-align:right;}
 .receipt-footer {text-align:center;}
 
 /* from http://www.communitymx.com/content/article.cfm?cid=529b0 */
@@ -112,6 +113,7 @@ button.cash-drawer
 }
 </style>
 <script language="JavaScript" type="text/javascript">
+/*TODO:<script language="javascript" src="cash_reg.js"></script>*/
 /*
 Program: ROYAL alpha 601sc cash management system emulator 
 Author: Nathaniel Beaver
@@ -194,12 +196,17 @@ EmployeePin[23]="123";
 EmployeePin[24]="123";
 EmployeePin[25]="123";
 
-var TotalCost = 0;
-var Tax = 0;
-var Qty = 0;
+var ItemCost = 0.0;
+var ItemTax = 0.0;
+var TotalNoTax = 0.0;
+var TotalTax = 0.0
+var TotalCost = 0.0
+var Qty = 0; //Everything in JS is floating point, sadly
 var ErrorState = false;
 var EnteringPin = false;
 var ClerkedIn = false;
+var VoidMode = false;
+var AddTax = true; //True unless 'Non-tax' is pressed
 var ClerkId = 0;
 var EnteredPin = "";
 var PrevKeyId = "";
@@ -210,7 +217,8 @@ var CommandKeyIds = ['Clear','Void','QTY'];
 var PaymentKeyIds = ['PIN/CHECK','Subtotal','PAY CASH'];
 var AuxiliaryKeys = ['Feed','Clerk ID'];
 var FeeKeys = []; //todo: make these keys do something
-var TaxKeys = [];
+var TaxKeys = []; //todo: make these keys do something
+var KeyLog = []; //starts out with no keys
 
 var ClerkingInKeys = NumKeyIds.concat(AuxiliaryKeys, 'Clear');
 var EnteringPinKeys = NumKeyIds.concat('PIN/CHECK','Feed');
@@ -237,22 +245,36 @@ ItemPrice['POWERTABS']='1.00';
 ItemPrice['DVD MENU']='30.00';
 ItemPrice['COFFEE']='0.50';
 
-var ReceiptString = new Array();
-ReceiptString['PRINTING']='PRINTING<span class="right-side">*0.50T1</span>';
-ReceiptString['26" LAMINA']=''; //todo:find this out
-ReceiptString['12" LAMINA']='12" LAMINATE<span class="right-side">*0.15T1</span>';
-ReceiptString['PASSPORT']='PASSPORT<span class="right-side">*5.00T1</span>';
-ReceiptString['FAB 6 SURC']='FAB 6 SURCHG<span class="right-side">*25.00T1</span>';
-ReceiptString['LATE FEE']='LATE FEE<span class="right-side">*0.12&nbsp;&nbsp;</span>';
-ReceiptString['CD DUPLICA']='CD DUPLICAT<span class="right-side">*4.00T1</span>';
-ReceiptString['DVD DUPLIC']='DVD DUPLICAT<span class="right-side">*4.00T1</span>';
-ReceiptString['DVD AUTHOR']='DVD AUTHORIN<span class="right-side">*50.00T1</span>';
-ReceiptString['PREFLIGHT']='PREFLIGHT<span class="right-side">*10.00T1</span>';
-ReceiptString['USAGE FEES']='USAGE FEES<span class="right-side">*0.14&nbsp;&nbsp;</span>';
-ReceiptString['POWERTABS']='POWERTABS<span class="right-side">*1.00T1</span>';
-ReceiptString['DVD MENU']='DVD MENU<span class="right-side">*30.00T1</span>';
-ReceiptString['COFFEE']='COFFEE<span class="right-side">*0.50&nbsp;&nbsp;</span>';
-
+var ReceiptFirstHalf = new Array();
+ReceiptFirstHalf['PRINTING']='PRINTING<span class="right-side">*';
+ReceiptFirstHalf['26" LAMINA']=''; //todo:find this out
+ReceiptFirstHalf['12" LAMINA']='12" LAMINATE<span class="right-side">*';
+ReceiptFirstHalf['PASSPORT']='PASSPORT<span class="right-side">*';
+ReceiptFirstHalf['FAB 6 SURC']='FAB 6 SURCHG<span class="right-side">*';
+ReceiptFirstHalf['LATE FEE']='LATE FEE<span class="right-side">*';
+ReceiptFirstHalf['CD DUPLICA']='CD DUPLICAT<span class="right-side">*';
+ReceiptFirstHalf['DVD DUPLIC']='DVD DUPLICAT<span class="right-side">*';
+ReceiptFirstHalf['DVD AUTHOR']='DVD AUTHORIN<span class="right-side">*';
+ReceiptFirstHalf['PREFLIGHT']='PREFLIGHT<span class="right-side">*';
+ReceiptFirstHalf['USAGE FEES']='USAGE FEES<span class="right-side">*';
+ReceiptFirstHalf['POWERTABS']='POWERTABS<span class="right-side">*';
+ReceiptFirstHalf['DVD MENU']='DVD MENU<span class="right-side">*';
+ReceiptFirstHalf['COFFEE']='COFFEE<span class="right-side">*';
+var ReceiptSecondHalf = new Array();
+ReceiptSecondHalf['PRINTING']='T1</span>';
+ReceiptSecondHalf['26" LAMINA']=''; //todo:find this out
+ReceiptSecondHalf['12" LAMINA']='T1</span>';
+ReceiptSecondHalf['PASSPORT']='T1</span>';
+ReceiptSecondHalf['FAB 6 SURC']='T1</span>';
+ReceiptSecondHalf['LATE FEE']='&nbsp;&nbsp;</span>';
+ReceiptSecondHalf['CD DUPLICA']='T1</span>';
+ReceiptSecondHalf['DVD DUPLIC']='T1</span>';
+ReceiptSecondHalf['DVD AUTHOR']='T1</span>';
+ReceiptSecondHalf['PREFLIGHT']='T1</span>';
+ReceiptSecondHalf['USAGE FEES']='&nbsp;&nbsp;</span>';
+ReceiptSecondHalf['POWERTABS']='T1</span>';
+ReceiptSecondHalf['DVD MENU']='T1</span>';
+ReceiptSecondHalf['COFFEE']='&nbsp;&nbsp;</span>';
 function InArray(Element, Array) {
     for (var i in Array) {
         if (Array[i] == Element) {
@@ -261,6 +283,29 @@ function InArray(Element, Array) {
     }
     return false;
 }
+function Debug() {
+    alert(
+    "ItemCost = "+ItemCost+"\n"+
+    "ItemTax = "+ItemTax+"\n"+
+    "TotalNoTax = "+TotalNoTax+"\n"+
+    "TotalTax = "+TotalTax+"\n"+
+    "TotalCost = "+TotalCost+"\n"+
+    "Qty = "+Qty+"\n"+
+    "ErrorState = "+ErrorState+"\n"+
+    "EnteringPin = "+EnteringPin+"\n"+
+    "ClerkedIn = "+ClerkedIn+"\n"+
+    "VoidMode = "+VoidMode+"\n"+
+    "AddTax = "+AddTax+"\n"+
+    "ClerkId = "+ClerkId+"\n"+
+    "EnteredPin = "+EnteredPin+"\n"+
+    "PrevKeyId = "+PrevKeyId+"\n"+
+    "VoidMode = "+VoidMode+"\n"+
+    "NextPrevKeyId = "+NextPrevKeyId+"\n"+
+    "AcceptableKeyIds = "+AcceptableKeyIds+"\n"+
+    "KeyLog = "+KeyLog+"\n"   
+    );
+}
+    
 /***********************************************************************
 Displays
 customer-display-upper
@@ -291,6 +336,12 @@ function ParseDollars() {
 function ParseNum() {
     return parseInt((document.getElementById('customer-display-lower-right').innerHTML));
 }
+function PrintReceiptItem(KeyId, ItemCost) {
+    AppendDisplay('receipt', '<div class="receipt-items">'+ReceiptFirstHalf[KeyId]+ItemCost.toFixed(2)+ReceiptSecondHalf[KeyId]+'<br></div>');
+}
+function PrintReceiptRightAlign(Text) {
+    AppendDisplay('receipt', '<div class="receipt-right-align">'+Text+'&nbsp;<br></div>');
+}
 function PrintReceiptHeader(EmployeeName) {
     AppendDisplay('receipt', '<div class="receipt-header">MEDIA SERVICES<br>Olin Hall room 032<br>507 933 7459<br>mediaservices@gac.edu<br><br><br><br></div>');
     var now = new Date();
@@ -298,11 +349,14 @@ function PrintReceiptHeader(EmployeeName) {
     AppendDisplay('receipt', '<div class="receipt-clerkin">'+DateStr+'<span class="right-side">MC #:0000&nbsp;&nbsp;</span><br>'+EmployeeName+'<br></div>');
 }
 function PrintReceiptTotals(PaymentType, Total, AmountPaid, Change) {
-    //todo: change total, amount, and change to actual values
-    AppendDisplay('receipt', '<div class="receipt-totals">------------------------<br>'+
-                  '<b>TOTAL</b><span class="right-side">*'+Total.toFixed(2)+'&nbsp;&nbsp;</span><br>'+
-                  PaymentType+'<span class="right-side">*'+AmountPaid.toFixed(2)+'&nbsp;&nbsp;</span><br>'+
-                  'CHANGE<span class="right-side">*'+Change.toFixed(2)+'&nbsp;&nbsp;</span><br></div>');
+    if (AddTax === true) {
+        AppendDisplay('receipt', '<div class="receipt-right-align>*'+TotalTax.toFixed(2)+'T1</div>');
+    }
+    AppendDisplay('receipt',
+                '<div class="receipt-totals">------------------------<br>'+
+                '<b>TOTAL</b><span class="right-side">*'+Total.toFixed(2)+'&nbsp;&nbsp;</span><br>'+
+                PaymentType+'<span class="right-side">*'+AmountPaid.toFixed(2)+'&nbsp;&nbsp;</span><br>'+
+                'CHANGE<span class="right-side">*'+Change.toFixed(2)+'&nbsp;&nbsp;</span><br></div>');
 }
 function PrintReceiptFooter() {
     var now = new Date();
@@ -329,8 +383,13 @@ function ThrowCashRegError(ErrorName) {
 }
 function Checkout(PaymentType) {
     //calculate change, update displays and receipt, clock out
-    //todo: tax
     var Received = ParseDollars();
+    if (AddTax === true) {
+        TotalCost = TotalNoTax + TotalTax;
+    }
+    else {
+        TotalCost = TotalNoTax;
+    }
     if (Received < TotalCost) {
         ThrowCashRegError('ERR'); //TODO: check what the actual error is
     }
@@ -342,6 +401,7 @@ function Checkout(PaymentType) {
         PrintReceiptTotals(PaymentType, TotalCost, Received, Change);
         PrintReceiptFooter();
         SetDisplay('big-button-container','<button class="cash-drawer" onClick="CloseCashDrawer()">Close Cash Drawer</button>');
+        AcceptableKeyIds = []; //TODO: check what really happens if you press a button with the drawer open
     }
 }
 function CloseCashDrawer() {
@@ -352,8 +412,10 @@ function CloseCashDrawer() {
     //also, check concurrency issues
     ClerkedIn = false;
     AcceptableKeyIds = ClerkingInKeys;
+    KeyLog = []
 }
 function PressKey(KeyId, KeyNum) {
+    KeyLog.push(KeyId);
     if (KeyId == "Clear Receipt") {
         ClearDisplay('receipt');
         return true;
@@ -379,7 +441,7 @@ function PressKey(KeyId, KeyNum) {
             return true;
         }
         else {
-        return false;
+            return false;
         }
     }
     if ( !InArray(KeyId, AcceptableKeyIds) ) {
@@ -407,25 +469,45 @@ function PressKey(KeyId, KeyNum) {
         SetDisplay('customer-display-upper', KeyId);
         SetDisplay('customer-display-lower-left', KeyNum);
         if (PrevKeyId === "QTY") {
-            TotalCost += parseFloat(ItemPrice[KeyId]) * Qty;
+            ItemCost = parseFloat(ItemPrice[KeyId]) * Qty;
             SetDisplay('customer-display-lower-right',ItemPrice[KeyId]*Qty);
+            PrintReceiptRightAlign(ItemPrice[KeyId]+'@');
         }
         else if (InArray(PrevKeyId, NumKeyIds)){
             //price override, e.g. printing
-            TotalCost += parseFloat(document.getElementById('customer-display-lower-right').innerHTML) / 100.00;
+            ItemCost = parseFloat(document.getElementById('customer-display-lower-right').innerHTML) / 100.00;
         }
         else { //only one of the item
-            TotalCost += parseFloat(ItemPrice[KeyId])
+            Qty = 1;
+            ItemCost = parseFloat(ItemPrice[KeyId]) * Qty;
             SetDisplay('customer-display-lower-right',ItemPrice[KeyId]);
         }
-        //e.g. <div class="receipt-items">PASSPORT<span class="right-side">*5.00T1</span><br></div>
-        AppendDisplay('receipt', '<div class="receipt-items">'+ReceiptString[KeyId]+'<br></div>'); //to do: make this actually match the amount charged, not a canned output
-        return true;
+        if (AddTax === true) {
+            ItemTax = ItemCost * TaxRate;
         }
+        if (VoidMode == true) {
+            //TODO: make VoidReceiptItem function that behaves differently
+            PrintReceiptItem(KeyId, -1*ItemCost);
+            TotalNoTax -= ItemCost;
+            if (AddTax === true) {
+                TotalTax -= ItemTax;
+            }
+            VoidMode = false;
+        }
+        else {
+            PrintReceiptItem(KeyId, ItemCost);
+            TotalNoTax += ItemCost;
+            if (AddTax === true) {
+                TotalTax += ItemTax;
+            }
+        }
+        return true;
+    }
     switch(KeyId) {//todo: set acceptable key ids for clear
         case "QTY" :
             if (InArray(PrevKeyId,NumKeyIds)) {
-                Qty = parseInt(PrevKeyId); //todo: make sure it doesn't stay this quantity for all the following items
+                Qty = parseInt(PrevKeyId);
+                PrintReceiptRightAlign(Qty+'x');
             }
             else {
                 ThrowCashRegError('ERROR')
@@ -441,12 +523,32 @@ function PressKey(KeyId, KeyNum) {
             Qty = 0;
             break;
         case "Void" :
-            //todo: figure out this whole business  
-            //SetDisplay('customer-display-upper', 'VOID/CORR');
+            //todo: figure out this whole business 
+            AppendDisplay('receipt', 'VOID/CORR<br>');
+            if (PrevKeyId == "Clear") {
+                SetDisplay('customer-display-upper', 'VOID/CORR');
+                VoidMode = true; //Now, when an item is entered, it will void it instead
+            }
+            else if(InArray(PrevKeyId, DeptKeyIds)) {
+                //void current item
+                SetDisplay('customer-display-upper', 'VOID/CORR');
+                TotalNoTax -= ItemCost;
+                //TODO: figure out voiding on receipts
+                PrintReceiptItem(PrevKeyId, -1*ItemCost);
+            }
+            else {
+                ThrowCashRegError("ERR");
+                alert("Incorrect use of void.");
+            }
             break;
         case "Feed" :
             AppendDisplay('receipt', '<br>');
             break;
+        case "Non-tax":
+            AddTax = false;
+            TotalTax = 0.0;
+            //This appears to be a global effect, i.e. no tax for the whole shebang.
+            //TODO: check if it can be applied item by item.
         case "Clerk ID" :
             ClerkId = ParseNum();
             //TODO: check to make sure it is in the range 1 to 31 or whatever
@@ -489,7 +591,13 @@ function PressKey(KeyId, KeyNum) {
                 //print out the current total; do nothing to receipt
                 SetDisplay('customer-display-upper', 'SUBTTL');
                 SetDisplay('customer-display-lower-left','.S');
-                SetDisplay('customer-display-lower-right',TotalCost.toFixed(2));
+                if (AddTax === true) {
+                    DisplayTotal = TotalNoTax+TotalTax;
+                }
+                else {
+                    DisplayTotal = TotalNoTax;
+                }
+                SetDisplay('customer-display-lower-right', DisplayTotal.toFixed(2));
             }
             break;
         case "PAY CASH" :
@@ -516,7 +624,7 @@ function stop_single_sound() {
 </audio>
 */
 </script> 
-<title>Media Services Cash Register Emulator v0.36</title>
+<title>Media Services Cash Register Emulator v0.41</title>
 </head>
 <body>
 <noscript>This emulator uses Javascript. Your browser either doesn't support Javascript or you have it turned off.</noscript>
@@ -539,7 +647,8 @@ function stop_single_sound() {
             <div id="receipt">
             </div>
             <br>
-            <button onClick="PressKey('Clear Receipt')">Clear Receipt</button></td>
+            <button onClick="PressKey('Clear Receipt')">Clear Receipt</button>
+            <button onClick="Debug()">Debug</button>
         </td>
         <td>
             <div id="customer-display-upper">HELLO</div>
@@ -709,7 +818,7 @@ function stop_single_sound() {
         <td>
             <table id="PaymentKeys" border="1" align=center>
                 <tr>
-                    <td><button class="payment-key">Non-tax</button></td>
+                    <td><button class="payment-key" onClick="PressKey('Non-tax')">Non-tax</button></td>
                     <td><button class="payment-key" style="background-color:red;color:white" onClick="PressKey('PIN/CHECK')">PIN<hr>CHECK</button></td>
                 </tr>
                 <tr>
@@ -728,5 +837,6 @@ function stop_single_sound() {
     </tr>
 </table>
 <div id="big-button-container"></div>
+<div>TODO: put this alongside the whole shebang inside a span.<br>Instructions:<br>1.Enter clerk number.</div>
 </body>
 </html>
