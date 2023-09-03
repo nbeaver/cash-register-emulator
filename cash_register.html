@@ -1,69 +1,69 @@
 <html>
 <head>
-<meta http-equiv="Content-type" content="text/html;charset=UTF-8">	
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">  
 <style type="text/css">
 button.fee-key, button.payment-key, button.command-key, button.auxiliary-key, button.dept-key, button.tax-key, button.clerk-id-key
 {
-	width:60px;
-	height:60px;
+    width:60px;
+    height:60px;
 }
 button.dept-key
 {
-	font-size:10px;
-	background-color:white;
+    font-size:10px;
+    background-color:white;
 }
 button.white-bg
 {
-	background-color:white;
+    background-color:white;
 }
 button.yellow-bg
 {
-	background-color:yellow;
+    background-color:yellow;
 }
 button.number-key
 {
-	width:40px;
-	height:40px;
+    width:40px;
+    height:40px;
 }
 button.clerk-id-key
 {
-	background-color:orange;
-	color:white
+    background-color:orange;
+    color:white
 }
 button.total-key
 {
-	width:120px;
-	height:60px;
-	background-color:red;
-	color:white;
+    width:120px;
+    height:60px;
+    background-color:red;
+    color:white;
 }
 button.cash-drawer
 {
-	width:800px;
-	height:60px;
-	font-size:30px;
+    width:800px;
+    height:60px;
+    font-size:30px;
 }
 #receipt 
 {
-	background-color:white;
-	height:300px;
-	width:210px;
-	font-family:monospace;
-	float:left;
-	overflow-y:scroll;
+    background-color:white;
+    height:300px;
+    width:210px;
+    font-family:monospace;
+    float:left;
+    overflow-y:scroll;
 }
 .receipt-header {text-align:center;}
 .receipt-clerkin {
-	text-align:left;
-	position:relative;
+    text-align:left;
+    position:relative;
 }
 .receipt-items {
-	text-align:justify;
-	position:relative;
+    text-align:justify;
+    position:relative;
 }
 .receipt-totals {
-	text-align:justify;
-	position:relative;
+    text-align:justify;
+    position:relative;
 }
 .receipt-timestamp {text-align:right;}
 .receipt-footer {text-align:center;}
@@ -83,32 +83,32 @@ button.cash-drawer
    } 
 #customer-display-upper
 {
-	height:70px;
-	width:500px;
-	color:green; 
-	background-color:black; 
-	font-size:300%; 
-	font-family:courier,monospace; 
-	white-space:nowrap; 
-	overflow:auto;
-	float:left;
-	text-align:left;
+    height:70px;
+    width:500px;
+    color:green; 
+    background-color:black; 
+    font-size:300%; 
+    font-family:courier,monospace; 
+    white-space:nowrap; 
+    overflow:auto;
+    float:left;
+    text-align:left;
 }
 #customer-display-lower
 {
-	height:70px;
-	width:500px;
-	color:green; 
-	background-color:black; 
-	font-size:300%; 
-	font-family:courier,monospace; 
-	white-space:nowrap; 
-	overflow:auto;
+    height:70px;
+    width:500px;
+    color:green; 
+    background-color:black; 
+    font-size:300%; 
+    font-family:courier,monospace; 
+    white-space:nowrap; 
+    overflow:auto;
 /*
-	float:right;
-	text-align:right;
+    float:right;
+    text-align:right;
 */
-	position:relative;
+    position:relative;
 }
 </style>
 <script language="JavaScript" type="text/javascript">
@@ -194,11 +194,11 @@ ReceiptString['COFFEE']='COFFEE<span class="right-side">*0.50&nbsp;&nbsp;</span>
 
 function InArray(Element, Array) {
     for (var i in Array) {
-		if (Array[i] == Element) {
-		    return true;
-		}
-	}
-	return false;
+        if (Array[i] == Element) {
+            return true;
+        }
+    }
+    return false;
 }
 function AppendDisplay(DisplayName, HTML) {
     document.getElementById(DisplayName).innerHTML += HTML;
@@ -211,26 +211,26 @@ function ClearDisplay(DisplayName) {
     document.getElementById(DisplayName).innerHTML = "";
 }
 function PrintReceiptHeader(EmployeeName) {
-	AppendDisplay('receipt', '<div class="receipt-header">MEDIA SERVICES<br>Olin Hall room 032<br>507 933 7459<br>mediaservices@gac.edu<br><br><br><br></div>');
-	var now = new Date();
-	var DateStr = now.getMonth() + "-" + now.getDate() + "-" + now.getFullYear();
-	AppendDisplay('receipt', '<div class="receipt-clerkin">'+DateStr+'<span class="right-side">MC #:0000&nbsp;&nbsp;</span><br>'+EmployeeName+'<br></div>');
+    AppendDisplay('receipt', '<div class="receipt-header">MEDIA SERVICES<br>Olin Hall room 032<br>507 933 7459<br>mediaservices@gac.edu<br><br><br><br></div>');
+    var now = new Date();
+    var DateStr = now.getMonth() + "-" + now.getDate() + "-" + now.getFullYear();
+    AppendDisplay('receipt', '<div class="receipt-clerkin">'+DateStr+'<span class="right-side">MC #:0000&nbsp;&nbsp;</span><br>'+EmployeeName+'<br></div>');
 }
 function PrintReceiptTotals(PaymentType, Total, AmountPaid, Change) {
-	//todo: change total, amount, and change to actual values
-	AppendDisplay('receipt', '<div class="receipt-totals">------------------------<br>'+
-	              '<b>TOTAL</b><span class="right-side">*'+Total.toFixed(2)+'&nbsp;&nbsp;</span><br>'+
-	              PaymentType+'<span class="right-side">*'+AmountPaid.toFixed(2)+'&nbsp;&nbsp;</span><br>'+
-	              'CHANGE<span class="right-side">*'+Change.toFixed(2)+'&nbsp;&nbsp;</span><br></div>');
+    //todo: change total, amount, and change to actual values
+    AppendDisplay('receipt', '<div class="receipt-totals">------------------------<br>'+
+                  '<b>TOTAL</b><span class="right-side">*'+Total.toFixed(2)+'&nbsp;&nbsp;</span><br>'+
+                  PaymentType+'<span class="right-side">*'+AmountPaid.toFixed(2)+'&nbsp;&nbsp;</span><br>'+
+                  'CHANGE<span class="right-side">*'+Change.toFixed(2)+'&nbsp;&nbsp;</span><br></div>');
 }
 function PrintReceiptFooter() {
-	var now = new Date();
-	var TimeStamp = ""
-	if (now.getHours < 12) TimeStamp+="AM ";
-	else                   TimeStamp+="PM ";
-	TimeStamp += (now.getHours() % 12) + "-" + now.getMinutes();
-	AppendDisplay('receipt', '<div class="receipt-timestamp">'+TimeStamp+'&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;<br></div>');
-	AppendDisplay('receipt', '<div class="receipt-footer">Thank you for visiting! <br>Please let us know how <br>we are doing.</div>');
+    var now = new Date();
+    var TimeStamp = ""
+    if (now.getHours < 12) TimeStamp+="AM ";
+    else                   TimeStamp+="PM ";
+    TimeStamp += (now.getHours() % 12) + "-" + now.getMinutes();
+    AppendDisplay('receipt', '<div class="receipt-timestamp">'+TimeStamp+'&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;<br></div>');
+    AppendDisplay('receipt', '<div class="receipt-footer">Thank you for visiting! <br>Please let us know how <br>we are doing.</div>');
 }
 function PlayErrorTone() {
     document.getElementById('ErrorTone').play();
@@ -240,79 +240,79 @@ function StopErrorTone() {
     document.getElementById('ErrorTone').currentTime = 0;
 }
 function ThrowCashRegError(ErrorName) {
-	ErrorState = true;
-	SetDisplay('customer-display-upper', ErrorName);
-	SetDisplay('customer-display-lower-left', '.E');
-	PlayErrorTone();
+    ErrorState = true;
+    SetDisplay('customer-display-upper', ErrorName);
+    SetDisplay('customer-display-lower-left', '.E');
+    PlayErrorTone();
 }
 function Checkout(PaymentType) {
-	//calculate change, update displays and receipt, clock out
-	//todo: tax
-	var Received = parseFloat(document.getElementById('customer-display-lower-right').innerHTML) / 100.00;
-	var Change = Received - TotalCost;
-	SetDisplay('customer-display-upper', 'CHANGE');
-	SetDisplay('customer-display-lower-left', '.C');
-	SetDisplay('customer-display-lower-right', Change.toFixed(2));
-	PrintReceiptTotals(PaymentType, TotalCost, Received, Change);
-	PrintReceiptFooter();
-	SetDisplay('big-button-container','<button class="cash-drawer" onClick="CloseCashDrawer()">Close Cash Drawer</button>');
+    //calculate change, update displays and receipt, clock out
+    //todo: tax
+    var Received = parseFloat(document.getElementById('customer-display-lower-right').innerHTML) / 100.00;
+    var Change = Received - TotalCost;
+    SetDisplay('customer-display-upper', 'CHANGE');
+    SetDisplay('customer-display-lower-left', '.C');
+    SetDisplay('customer-display-lower-right', Change.toFixed(2));
+    PrintReceiptTotals(PaymentType, TotalCost, Received, Change);
+    PrintReceiptFooter();
+    SetDisplay('big-button-container','<button class="cash-drawer" onClick="CloseCashDrawer()">Close Cash Drawer</button>');
 }
 function CloseCashDrawer() {
-	ClearDisplay('big-button-container');
-	ClerkedIn = false;
-	SetDisplay('customer-display-lower-left', '');
-	SetDisplay('customer-display-lower-right', 'PLEASE TAKE RECEIPT');
+    ClearDisplay('big-button-container');
+    ClerkedIn = false;
+    SetDisplay('customer-display-lower-left', '');
+    SetDisplay('customer-display-lower-right', 'PLEASE TAKE RECEIPT');
 }
 function PressKey(KeyId, KeyNum) {
-	if (KeyId == "Clear Receipt") {
-		ClearDisplay('receipt');
-		return true;
-	}
-	
-	PrevKeyId = NextPrevKeyId; //I could do this at the end, but that would mean restructuring the whole flow
-	NextPrevKeyId = KeyId;
-	if (KeyNum === undefined) {//KeyNum is optional, since only dept-keys have them
-		KeyNum = "";
-	}
-	if (ErrorState === true) {
-	    if (KeyId == "Clear") {
-		    ErrorState = false;
-			StopErrorTone();
-			ClearDisplay('customer-display-upper');
-			ClearDisplay('customer-display-lower-left');
-			ClearDisplay('customer-display-lower-right');
-			EnteredPin = "";
-			return true;
-		}
-		else {
-		return false;
-		}
-	}
-	if ( !InArray(KeyId, AcceptableKeyIds) && ClerkedIn == true) {
-		ThrowCashRegError('ERROR')
-		return false;
-	}
+    if (KeyId == "Clear Receipt") {
+        ClearDisplay('receipt');
+        return true;
+    }
+    
+    PrevKeyId = NextPrevKeyId; //I could do this at the end, but that would mean restructuring the whole flow
+    NextPrevKeyId = KeyId;
+    if (KeyNum === undefined) {//KeyNum is optional, since only dept-keys have them
+        KeyNum = "";
+    }
+    if (ErrorState === true) {
+        if (KeyId == "Clear") {
+            ErrorState = false;
+            StopErrorTone();
+            ClearDisplay('customer-display-upper');
+            ClearDisplay('customer-display-lower-left');
+            ClearDisplay('customer-display-lower-right');
+            EnteredPin = "";
+            return true;
+        }
+        else {
+        return false;
+        }
+    }
+    if ( !InArray(KeyId, AcceptableKeyIds) && ClerkedIn == true) {
+        ThrowCashRegError('ERROR')
+        return false;
+    }
 
-	if (InArray(KeyId, NumKeyIds)) {//numerical keypad
-		if (!InArray(PrevKeyId, NumKeyIds)) { //clear the displays if the previous key wasn't a number
-			ClearDisplay('customer-display-upper');
-			ClearDisplay('customer-display-lower-left');
-			ClearDisplay('customer-display-lower-right');
-		}
-		if (EnteringPin === true) {
-			EnteredPin += KeyId;
-			AppendDisplay('customer-display-lower-right', '*');
-		}
-		else {
-			AppendDisplay('customer-display-lower-right', KeyId);
-		}
-		return true;
-	}
-	if (ClerkedIn === true && InArray(KeyId, DeptKeyIds)) {//item keys, aka dept keys
-		//ring up an item
+    if (InArray(KeyId, NumKeyIds)) {//numerical keypad
+        if (!InArray(PrevKeyId, NumKeyIds)) { //clear the displays if the previous key wasn't a number
+            ClearDisplay('customer-display-upper');
+            ClearDisplay('customer-display-lower-left');
+            ClearDisplay('customer-display-lower-right');
+        }
+        if (EnteringPin === true) {
+            EnteredPin += KeyId;
+            AppendDisplay('customer-display-lower-right', '*');
+        }
+        else {
+            AppendDisplay('customer-display-lower-right', KeyId);
+        }
+        return true;
+    }
+    if (ClerkedIn === true && InArray(KeyId, DeptKeyIds)) {//item keys, aka dept keys
+        //ring up an item
         SetDisplay('customer-display-upper', KeyId);
-		SetDisplay('customer-display-lower-left', KeyNum);
-		if (PrevKeyId === "Qty") {
+        SetDisplay('customer-display-lower-left', KeyNum);
+        if (PrevKeyId === "Qty") {
             TotalCost += parseFloat(ItemPrice[KeyId]) * Qty;
             SetDisplay('customer-display-lower-right',ItemPrice[KeyId]*Qty);
         }
@@ -324,79 +324,79 @@ function PressKey(KeyId, KeyNum) {
             TotalCost += parseFloat(ItemPrice[KeyId])
             SetDisplay('customer-display-lower-right',ItemPrice[KeyId]);
         }
-		//e.g. <div class="receipt-items">PASSPORT<span class="right-side">*5.00T1</span><br></div>
-		AppendDisplay('receipt', '<div class="receipt-items">'+ReceiptString[KeyId]+'<br></div>'); //to do: make this actually match the amount charged, not a canned output
-		return true;
-		}
-	switch(KeyId) {//todo: set acceptable key ids
-		case "QTY" :
-			if (InArray(PrevKeyId,NumKeyIds)) {
-				Qty = parseInt(PrevKeyId);
-			}
-			else {
-				ThrowCashRegError('ERROR')
-				return false;
-			}
-			break;
-		case "Clear" : //no error clearing functions at this point
-			ClearDisplay('customer-display-upper');
-			ClearDisplay('customer-display-lower-left');
-			ClearDisplay('customer-display-lower-right');
-			EnteredPin = "";
+        //e.g. <div class="receipt-items">PASSPORT<span class="right-side">*5.00T1</span><br></div>
+        AppendDisplay('receipt', '<div class="receipt-items">'+ReceiptString[KeyId]+'<br></div>'); //to do: make this actually match the amount charged, not a canned output
+        return true;
+        }
+    switch(KeyId) {//todo: set acceptable key ids
+        case "QTY" :
+            if (InArray(PrevKeyId,NumKeyIds)) {
+                Qty = parseInt(PrevKeyId);
+            }
+            else {
+                ThrowCashRegError('ERROR')
+                return false;
+            }
+            break;
+        case "Clear" : //no error clearing functions at this point
+            ClearDisplay('customer-display-upper');
+            ClearDisplay('customer-display-lower-left');
+            ClearDisplay('customer-display-lower-right');
+            EnteredPin = "";
             Qty = 0;
-			break;
-		case "Void" :
-			//todo: figure out this whole business
-			break;
-		case "Feed" :
-			AppendDisplay('receipt', '<br>');
-			break;
-		case "Clerk ID" :
-			ClerkId = parseInt(PrevKeyId);//todo:fix this so this for multidigit ids can be parsed: document.getElementById('customer-display-lower-right').innerHTML
-			ClearDisplay('customer-display-upper');
-			SetDisplay('customer-display-lower-right','0.00');
-			EnteringPin = true;
-			break;
-		case "PIN/CHECK" :
-			if (EnteringPin === true && ClerkedIn === false && (EnteredPin === EmployeePin[ClerkId])) {
-				SetDisplay('customer-display-upper', EmployeeName[ClerkId]);
-				SetDisplay('customer-display-lower-left',ClerkId);
-				SetDisplay('customer-display-lower-right',"0.00");
-				PrintReceiptHeader(EmployeeName[ClerkId]);
-				ClerkedIn = true;
-				EnteringPin = false;
-				AcceptableKeyIds = AcceptableKeyIds.concat(NumKeyIds,DeptKeyIds,CommandKeyIds,PaymentKeyIds,AuxiliaryKeys,FeeKeys,TaxKeys);
-			}
-			else {
-				if (EnteringPin === true && ClerkedIn === false && (EnteredPin !== EmployeePin[ClerkId])) {
-						EnteringPin = false;
-						ThrowCashRegError('RE-CLERKB');
-						return false;
-				}
-				else {
-					if (ClerkedIn === true) {
-						Checkout("CHECK");
-					}
-				}
-			}
-			break;
-		case "Subtotal" :
-			if (ClerkedIn === true) {
+            break;
+        case "Void" :
+            //todo: figure out this whole business
+            break;
+        case "Feed" :
+            AppendDisplay('receipt', '<br>');
+            break;
+        case "Clerk ID" :
+            ClerkId = parseInt(PrevKeyId);//todo:fix this so this for multidigit ids can be parsed: document.getElementById('customer-display-lower-right').innerHTML
+            ClearDisplay('customer-display-upper');
+            SetDisplay('customer-display-lower-right','0.00');
+            EnteringPin = true;
+            break;
+        case "PIN/CHECK" :
+            if (EnteringPin === true && ClerkedIn === false && (EnteredPin === EmployeePin[ClerkId])) {
+                SetDisplay('customer-display-upper', EmployeeName[ClerkId]);
+                SetDisplay('customer-display-lower-left',ClerkId);
+                SetDisplay('customer-display-lower-right',"0.00");
+                PrintReceiptHeader(EmployeeName[ClerkId]);
+                ClerkedIn = true;
+                EnteringPin = false;
+                AcceptableKeyIds = AcceptableKeyIds.concat(NumKeyIds,DeptKeyIds,CommandKeyIds,PaymentKeyIds,AuxiliaryKeys,FeeKeys,TaxKeys);
+            }
+            else {
+                if (EnteringPin === true && ClerkedIn === false && (EnteredPin !== EmployeePin[ClerkId])) {
+                        EnteringPin = false;
+                        ThrowCashRegError('RE-CLERKB');
+                        return false;
+                }
+                else {
+                    if (ClerkedIn === true) {
+                        Checkout("CHECK");
+                    }
+                }
+            }
+            break;
+        case "Subtotal" :
+            if (ClerkedIn === true) {
                 //print out the current total; do nothing to receipt
-				SetDisplay('customer-display-upper', 'SUBTTL');
-				SetDisplay('customer-display-lower-left','.S');
-				SetDisplay('customer-display-lower-right',TotalCost.toFixed(2));
-			}
-			break;
-		case "PAY CASH" :
-			if (ClerkedIn === true) {
-				Checkout("AMOUNT");
-			}
-			break;
-		default :
-			alert("An unknown key has been pressed with id:"+KeyId);
-		return true; //switch statement ends here
-	}
+                SetDisplay('customer-display-upper', 'SUBTTL');
+                SetDisplay('customer-display-lower-left','.S');
+                SetDisplay('customer-display-lower-right',TotalCost.toFixed(2));
+            }
+            break;
+        case "PAY CASH" :
+            if (ClerkedIn === true) {
+                Checkout("AMOUNT");
+            }
+            break;
+        default :
+            alert("An unknown key has been pressed with id:"+KeyId);
+        return true; //switch statement ends here
+    }
 }
 /*
 function play_single_sound() {
@@ -412,212 +412,212 @@ function stop_single_sound() {
 </head>
 <body>
 <noscript>This emulator uses Javascript. Your browser either doesn't support Javascript or you have it turned off.</noscript>
-	<!--
-	<audio id="audiotag1" autobuffer="autobuffer"><source src="cash_reg_5sec_error_tone_3kHz.wav" type="audio/wav"></audio>
-	
-	<p>
-		<a href="javascript:play_single_sound();">Play 5-sec sound on single channel</a>
-		<a href="javascript:stop_single_sound();">Stop 5-sec sound on single channel</a>
-	</p>
-	-->
+    <!--
+    <audio id="audiotag1" autobuffer="autobuffer"><source src="cash_reg_5sec_error_tone_3kHz.wav" type="audio/wav"></audio>
+    
+    <p>
+        <a href="javascript:play_single_sound();">Play 5-sec sound on single channel</a>
+        <a href="javascript:stop_single_sound();">Stop 5-sec sound on single channel</a>
+    </p>
+    -->
 <audio id="ErrorTone" autobuffer="autobuffer" preload="auto" loop>
-	<source src="synthesized_error_sound1.wav" type="audio/wav">
-	<source src="synthesized_error_sound1.mp3" type="audio/mp3">
+    <source src="synthesized_error_sound1.wav" type="audio/wav">
+    <source src="synthesized_error_sound1.mp3" type="audio/mp3">
 </audio>
 <table id="CashRegisterDisplayTable">
-	<form name="CashRegisterDisplay">
-	<tr>
-		<td> 
-			<div id="receipt">
-			</div>
-			<br>
-			<button onClick="PressKey('Clear Receipt')">Clear Receipt</button></td>
-		</td>
-		<td>
-			<div id="customer-display-upper">HELLO</div>
-			<br>
-			<div id="customer-display-lower"><span id="customer-display-lower-left" class="left-side"></span><span id="customer-display-lower-right" class="right-side"></span></div>
-		</td>
-	</tr>
-	</form>
+    <form name="CashRegisterDisplay">
+    <tr>
+        <td> 
+            <div id="receipt">
+            </div>
+            <br>
+            <button onClick="PressKey('Clear Receipt')">Clear Receipt</button></td>
+        </td>
+        <td>
+            <div id="customer-display-upper">HELLO</div>
+            <br>
+            <div id="customer-display-lower"><span id="customer-display-lower-left" class="left-side"></span><span id="customer-display-lower-right" class="right-side"></span></div>
+        </td>
+    </tr>
+    </form>
 </table>
 <table id="CashRegisterKeyboard" border="1" align=left>
-	<tr>
-		<td></td>
-		<td>
-			<table id="AuxiliaryKeys" border="1" align=center>
-				<tr>
-					<td><button class="auxiliary-key white-bg" onClick="PressKey('Feed')">Feed</button></td>
-					<td><button class="clerk-id-key" onClick="PressKey('Clerk ID')">Clerk<br>ID</button></td>
-					<td><button class="auxiliary-key">Shift</button></td>
-				</tr>
-			</table>
-		</td>
-		<td>
-			<table id="FeeKeys" border="1">
-				<tr>
-					<td><button class="fee-key">5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E/Y<br>FAB6<br>Surcharg</button></td>
-					<td><button class="fee-key">10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;J<br>Preflight<br>Fee</button></td>
-					<td><button class="fee-key">15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O</button></td>
-					<td><button class="fee-key">20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T</button></td>
-				</tr>
-			</table>
-		</td>
-		<td>	
-			<table id="TaxKeys" border="1" align=center>
-				<tr>
-					<td><button class="tax-key">Tax1</button></td>
-					<td><button class="tax-key">Tax2</button></td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<table id="CommandKeys" border="1" align=center>
-				<tr>
-					<td><button class="command-key">Coupon</button></td>
-					<td><button class="command-key yellow-bg" onClick="PressKey('Void')">Entered&nbsp;Itm<br>Quantity<br>QTY</button></td>
-				</tr>
-				<tr>
-					<td><button class="command-key">Account<br>Receive</button></td>
-					<td><button class="command-key">Account<br>Pay&nbsp;Out</button></td>
-				</tr>
-				<tr>
-					<td><button class="command-key">Alternate<br>PLU<br>Price</button></td>
-					<td><button class="command-key">PLU</button></td>
-				</tr>
-				<tr>
-					<td><button class="command-key white-bg" onClick="PressKey('Clear')">Clear</button></td>
-					<td><button class="command-key white-bg" onClick="PressKey('Void')">Void</button></td>
-				</tr>
-			</table>
-		</td>
-		<td>
-			<table id="NumberKeys" border="1" cellspacing="15"align=center>
-				<tr>
-					<td><button class="number-key" onClick="PressKey('7')">7</button></td>
-					<td><button class="number-key" onClick="PressKey('8')">8</button></td>
-					<td><button class="number-key" onClick="PressKey('9')">9</button></td>
-				</tr>
-				<tr>
-					<td><button class="number-key" onClick="PressKey('4')">4</button></td>
-					<td><button class="number-key" onClick="PressKey('5')">5</button></td>
-					<td><button class="number-key" onClick="PressKey('6')">6</button></td>
-				</tr>
-				<tr>
-					<td><button class="number-key" onClick="PressKey('1')">1</button></td>
-					<td><button class="number-key" onClick="PressKey('2')">2</button></td>
-					<td><button class="number-key" onClick="PressKey('3')">3</button></td>
-				</tr>
-				<tr>
-					<td><button class="number-key" onClick="PressKey('0')">0</button></td>
-					<td><button class="number-key" onClick="PressKey('00')">00</button></td>
-					<td></td>
-				</tr>
-			</table>
-		</td>
-		<td>
-			<table id="DepartmentKeys" border="1" align=center>
-				<tr>
-					<td><button class="dept-key" onClick="PressKey('PASSPORT','4')">4&nbsp;&nbsp;&nbsp;&nbsp;D/X<br>Set&nbsp;of&nbsp;2<br>Passport<br>Photos</button></td>
-					<td><button class="dept-key" onClick="PressKey('DVD AUTHOR','9')">9&nbsp;&nbsp;&nbsp;&nbsp;I<br>DVD<br>Authorin</button></td>
-					<td><button class="dept-key" onClick="PressKey('COFFEE','14')">14&nbsp;&nbsp;&nbsp;&nbsp;N<br>COFFEE</button></td>
-					<td><button class="dept-key">19&nbsp;&nbsp;&nbsp;&nbsp;S</button></td>
-				</tr>
-				<tr>
-					<td><button class="dept-key" onClick="PressKey('12&quot; LAMINA','2')">
-							<table id="twelve-inch-laminate-button">
-								<tr>
-									<td class="header" style="font-size:10px">3&nbsp;&nbsp;&nbsp;&nbsp;C/W</td>
-								</tr>
-								<tr>
-									<td class="blue-label" style="background-color:blue;font-size:10px">12"<br>Laminate</td>
-								</tr>
-							</table>
-						</button>
-					</td>
-					<td><button class="dept-key" onClick="PressKey('DVD DUPLIC','8')">8&nbsp;&nbsp;&nbsp;&nbsp;H<br>DVD<br>Duplicat.</button></td>
-					<td><button class="dept-key" onClick="PressKey('DVD MENU','13')">13&nbsp;&nbsp;&nbsp;&nbsp;M<br>DVD<br>Menu</button></td>
-					<td><button class="dept-key">18&nbsp;&nbsp;&nbsp;&nbsp;R</button></td>
-				</tr>
-				<tr>
-					<td><button class="dept-key" onClick="PressKey('26&quot; LAMINA','3')">
-							<table id="twenty-six-inch-laminate-button">
-								<tr>
-									<td class="header" style="font-size:10px">2&nbsp;&nbsp;&nbsp;&nbsp;B/V</td>
-								</tr>
-								<tr>
-									<td class="blue-label" style="background-color:blue;font-size:10px">26"<br>Laminate</td>
-								</tr>
-							</table>
-						</button>
-					</td>
-					<td><button class="dept-key" onClick="PressKey('CD DUPLICA','7')">7&nbsp;&nbsp;&nbsp;&nbsp;G<br>CD<br>Duplicat.</button></td>
-					<td><button class="dept-key" onClick="PressKey('POWERTABS','12')">12&nbsp;&nbsp;&nbsp;&nbsp;L<br>Power<br>Tabs<br>(Grommets)</button></td>
-					<td><button class="dept-key">17&nbsp;&nbsp;&nbsp;&nbsp;Q</button></td>
-				</tr>
-				<tr>
-					<td>
-						<button class="dept-key" onClick="PressKey('PRINTING','1')">
-							<table id="large-format-printing-button">
-								<tr>
-									<td class="header" style="font-size:10px">1&nbsp;&nbsp;&nbsp;&nbsp;A/U</td>
-								</tr>
-								<tr>
-									<td class="green-label" style="background-color:green;font-size:10px;color=white;">Lrg&nbsp;Fmt.<br>Printing<br>(Price)</td>
-								</tr>
-							</table>
-						</button>
-					</td>
-					<td>
-						<button class="dept-key" onClick="PressKey('LATE FEE','6')">
-							<table id="late_fee_button">
-								<tr>
-									<td class="header" style="font-size:10px">6&nbsp;&nbsp;&nbsp;&nbsp;F/Z</td>
-								</tr>
-								<tr>
-									<td class="green-label" style="background-color:green;font-size:10px;color=white;">Late<br>Fee</td>
-								</tr>
-							</table>
-						</button>
-					</td>
-					<td>
-						<button class="dept-key" onClick="PressKey('USAGE FEES','11')">
-							<table id="usage_fee_button">
-								<tr>
-									<td class="header" style="font-size:10px">11&nbsp;&nbsp;&nbsp;&nbsp;K</td>
-								</tr>
-								<tr>
-									<td class="green-label" style="background-color:green;font-size:10px;color=white;">Usage<br>Fee</td>
-								</tr>
-							</table>
-						</button>
-					</td>
-					<td><button class="dept-key">16&nbsp;&nbsp;&nbsp;&nbsp;P</button></td>
-				</tr>
-			</table>
-		</td>
-		<td>
-			<table id="PaymentKeys" border="1" align=center>
-				<tr>
-					<td><button class="payment-key">Non-tax</button></td>
-					<td><button class="payment-key" style="background-color:red;color:white" onClick="PressKey('PIN/CHECK')">PIN<hr>CHECK</button></td>
-				</tr>
-				<tr>
-					<td><button class="payment-key">Return</button></td>
-					<td><button class="payment-key">Charge</button></td>
-				</tr>
-				<tr>
-					<td><button class="payment-key" style="background-color:red;color:white" onClick="PressKey('Subtotal','S')">Sub<br>total</button></td>
-					<td><button class="payment-key">Items<br>Subtotal<br>No&nbsp;Sale</button></td>
-				</tr>
-				<tr>
-					<td colspan="2"><button class="total-key" onClick="PressKey('PAY CASH')">Amount&nbsp;Tend&nbsp;Total<br>PAY&nbsp;CASH</button></td>
-				</tr>
-			</table>
-		</td>
-	</tr>
+    <tr>
+        <td></td>
+        <td>
+            <table id="AuxiliaryKeys" border="1" align=center>
+                <tr>
+                    <td><button class="auxiliary-key white-bg" onClick="PressKey('Feed')">Feed</button></td>
+                    <td><button class="clerk-id-key" onClick="PressKey('Clerk ID')">Clerk<br>ID</button></td>
+                    <td><button class="auxiliary-key">Shift</button></td>
+                </tr>
+            </table>
+        </td>
+        <td>
+            <table id="FeeKeys" border="1">
+                <tr>
+                    <td><button class="fee-key">5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E/Y<br>FAB6<br>Surcharg</button></td>
+                    <td><button class="fee-key">10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;J<br>Preflight<br>Fee</button></td>
+                    <td><button class="fee-key">15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O</button></td>
+                    <td><button class="fee-key">20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T</button></td>
+                </tr>
+            </table>
+        </td>
+        <td>    
+            <table id="TaxKeys" border="1" align=center>
+                <tr>
+                    <td><button class="tax-key">Tax1</button></td>
+                    <td><button class="tax-key">Tax2</button></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table id="CommandKeys" border="1" align=center>
+                <tr>
+                    <td><button class="command-key">Coupon</button></td>
+                    <td><button class="command-key yellow-bg" onClick="PressKey('Void')">Entered&nbsp;Itm<br>Quantity<br>QTY</button></td>
+                </tr>
+                <tr>
+                    <td><button class="command-key">Account<br>Receive</button></td>
+                    <td><button class="command-key">Account<br>Pay&nbsp;Out</button></td>
+                </tr>
+                <tr>
+                    <td><button class="command-key">Alternate<br>PLU<br>Price</button></td>
+                    <td><button class="command-key">PLU</button></td>
+                </tr>
+                <tr>
+                    <td><button class="command-key white-bg" onClick="PressKey('Clear')">Clear</button></td>
+                    <td><button class="command-key white-bg" onClick="PressKey('Void')">Void</button></td>
+                </tr>
+            </table>
+        </td>
+        <td>
+            <table id="NumberKeys" border="1" cellspacing="15"align=center>
+                <tr>
+                    <td><button class="number-key" onClick="PressKey('7')">7</button></td>
+                    <td><button class="number-key" onClick="PressKey('8')">8</button></td>
+                    <td><button class="number-key" onClick="PressKey('9')">9</button></td>
+                </tr>
+                <tr>
+                    <td><button class="number-key" onClick="PressKey('4')">4</button></td>
+                    <td><button class="number-key" onClick="PressKey('5')">5</button></td>
+                    <td><button class="number-key" onClick="PressKey('6')">6</button></td>
+                </tr>
+                <tr>
+                    <td><button class="number-key" onClick="PressKey('1')">1</button></td>
+                    <td><button class="number-key" onClick="PressKey('2')">2</button></td>
+                    <td><button class="number-key" onClick="PressKey('3')">3</button></td>
+                </tr>
+                <tr>
+                    <td><button class="number-key" onClick="PressKey('0')">0</button></td>
+                    <td><button class="number-key" onClick="PressKey('00')">00</button></td>
+                    <td></td>
+                </tr>
+            </table>
+        </td>
+        <td>
+            <table id="DepartmentKeys" border="1" align=center>
+                <tr>
+                    <td><button class="dept-key" onClick="PressKey('PASSPORT','4')">4&nbsp;&nbsp;&nbsp;&nbsp;D/X<br>Set&nbsp;of&nbsp;2<br>Passport<br>Photos</button></td>
+                    <td><button class="dept-key" onClick="PressKey('DVD AUTHOR','9')">9&nbsp;&nbsp;&nbsp;&nbsp;I<br>DVD<br>Authorin</button></td>
+                    <td><button class="dept-key" onClick="PressKey('COFFEE','14')">14&nbsp;&nbsp;&nbsp;&nbsp;N<br>COFFEE</button></td>
+                    <td><button class="dept-key">19&nbsp;&nbsp;&nbsp;&nbsp;S</button></td>
+                </tr>
+                <tr>
+                    <td><button class="dept-key" onClick="PressKey('12&quot; LAMINA','2')">
+                            <table id="twelve-inch-laminate-button">
+                                <tr>
+                                    <td class="header" style="font-size:10px">3&nbsp;&nbsp;&nbsp;&nbsp;C/W</td>
+                                </tr>
+                                <tr>
+                                    <td class="blue-label" style="background-color:blue;font-size:10px">12"<br>Laminate</td>
+                                </tr>
+                            </table>
+                        </button>
+                    </td>
+                    <td><button class="dept-key" onClick="PressKey('DVD DUPLIC','8')">8&nbsp;&nbsp;&nbsp;&nbsp;H<br>DVD<br>Duplicat.</button></td>
+                    <td><button class="dept-key" onClick="PressKey('DVD MENU','13')">13&nbsp;&nbsp;&nbsp;&nbsp;M<br>DVD<br>Menu</button></td>
+                    <td><button class="dept-key">18&nbsp;&nbsp;&nbsp;&nbsp;R</button></td>
+                </tr>
+                <tr>
+                    <td><button class="dept-key" onClick="PressKey('26&quot; LAMINA','3')">
+                            <table id="twenty-six-inch-laminate-button">
+                                <tr>
+                                    <td class="header" style="font-size:10px">2&nbsp;&nbsp;&nbsp;&nbsp;B/V</td>
+                                </tr>
+                                <tr>
+                                    <td class="blue-label" style="background-color:blue;font-size:10px">26"<br>Laminate</td>
+                                </tr>
+                            </table>
+                        </button>
+                    </td>
+                    <td><button class="dept-key" onClick="PressKey('CD DUPLICA','7')">7&nbsp;&nbsp;&nbsp;&nbsp;G<br>CD<br>Duplicat.</button></td>
+                    <td><button class="dept-key" onClick="PressKey('POWERTABS','12')">12&nbsp;&nbsp;&nbsp;&nbsp;L<br>Power<br>Tabs<br>(Grommets)</button></td>
+                    <td><button class="dept-key">17&nbsp;&nbsp;&nbsp;&nbsp;Q</button></td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="dept-key" onClick="PressKey('PRINTING','1')">
+                            <table id="large-format-printing-button">
+                                <tr>
+                                    <td class="header" style="font-size:10px">1&nbsp;&nbsp;&nbsp;&nbsp;A/U</td>
+                                </tr>
+                                <tr>
+                                    <td class="green-label" style="background-color:green;font-size:10px;color=white;">Lrg&nbsp;Fmt.<br>Printing<br>(Price)</td>
+                                </tr>
+                            </table>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="dept-key" onClick="PressKey('LATE FEE','6')">
+                            <table id="late_fee_button">
+                                <tr>
+                                    <td class="header" style="font-size:10px">6&nbsp;&nbsp;&nbsp;&nbsp;F/Z</td>
+                                </tr>
+                                <tr>
+                                    <td class="green-label" style="background-color:green;font-size:10px;color=white;">Late<br>Fee</td>
+                                </tr>
+                            </table>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="dept-key" onClick="PressKey('USAGE FEES','11')">
+                            <table id="usage_fee_button">
+                                <tr>
+                                    <td class="header" style="font-size:10px">11&nbsp;&nbsp;&nbsp;&nbsp;K</td>
+                                </tr>
+                                <tr>
+                                    <td class="green-label" style="background-color:green;font-size:10px;color=white;">Usage<br>Fee</td>
+                                </tr>
+                            </table>
+                        </button>
+                    </td>
+                    <td><button class="dept-key">16&nbsp;&nbsp;&nbsp;&nbsp;P</button></td>
+                </tr>
+            </table>
+        </td>
+        <td>
+            <table id="PaymentKeys" border="1" align=center>
+                <tr>
+                    <td><button class="payment-key">Non-tax</button></td>
+                    <td><button class="payment-key" style="background-color:red;color:white" onClick="PressKey('PIN/CHECK')">PIN<hr>CHECK</button></td>
+                </tr>
+                <tr>
+                    <td><button class="payment-key">Return</button></td>
+                    <td><button class="payment-key">Charge</button></td>
+                </tr>
+                <tr>
+                    <td><button class="payment-key" style="background-color:red;color:white" onClick="PressKey('Subtotal','S')">Sub<br>total</button></td>
+                    <td><button class="payment-key">Items<br>Subtotal<br>No&nbsp;Sale</button></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><button class="total-key" onClick="PressKey('PAY CASH')">Amount&nbsp;Tend&nbsp;Total<br>PAY&nbsp;CASH</button></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
 </table>
 <div id="big-button-container"></div>
 </body>
