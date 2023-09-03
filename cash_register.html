@@ -127,6 +127,7 @@ http://www.communitymx.com/content/article.cfm?cid=529b0
 http://www.elated.com/articles/working-with-dates/
 http://www.elated.com/articles/html5-audio/
 */
+/*
 var EmployeeName = new Array();
 EmployeeName[1]="ZAPHOD B";
 EmployeeName[2]="FORD P";
@@ -138,6 +139,60 @@ EmployeePin[1]="123";
 EmployeePin[2]="456";
 EmployeePin[3]="789";
 EmployeePin[4]="042";
+*/
+var EmployeeName = new Array();
+EmployeeName[1]="MXXX DXXXXXXXXX";
+EmployeeName[2]="MXXXXX BXXXXXX";
+EmployeeName[3]="NXXXXXXXX BXXXXX";
+EmployeeName[4]="PXXXX DXXXXXXX";
+EmployeeName[5]="AXXX EXXXX";
+EmployeeName[6]="BXXXXXX FXXXX";
+EmployeeName[7]="CXXX GXXXXX";
+EmployeeName[8]="JXXXX HXXX";
+EmployeeName[9]="EXXX HXXXXXXXX";
+EmployeeName[10]="AXXXXX HXXXXXXXX";
+EmployeeName[11]="JXXXXX HXXXXXXXXXX";
+EmployeeName[12]="GXXXXXX HXXXXXX";
+EmployeeName[13]="MXXXX HXXXXXXX";
+EmployeeName[14]="MXXXXXX HXXXXXXX";
+EmployeeName[15]="AXXXXX HXXXXX";
+EmployeeName[16]="DXXX JXXXXX";
+EmployeeName[17]="EXXX LXXXXX";
+EmployeeName[18]="MXXXXXXX RXXXXXX";
+EmployeeName[19]="TXXXX RXXX";
+EmployeeName[20]="KXXX RXXXX";
+EmployeeName[21]="JXXX SXXXXXX";
+EmployeeName[22]="HXXXXXX TXXXXXX";
+EmployeeName[23]="KXXXXX WXXXXX";
+EmployeeName[24]="JXXXXXXX WXXXXXX";
+EmployeeName[25]="BXXX XXXXX";
+
+var EmployeePin = new Array();
+EmployeePin[1]="123";
+EmployeePin[2]="123";
+EmployeePin[3]="123";
+EmployeePin[4]="123";
+EmployeePin[5]="123";
+EmployeePin[6]="123";
+EmployeePin[7]="123";
+EmployeePin[8]="123";
+EmployeePin[9]="123";
+EmployeePin[10]="123";
+EmployeePin[11]="123";
+EmployeePin[12]="123";
+EmployeePin[13]="123";
+EmployeePin[14]="123";
+EmployeePin[15]="123";
+EmployeePin[16]="123";
+EmployeePin[17]="123";
+EmployeePin[18]="123";
+EmployeePin[19]="123";
+EmployeePin[20]="123";
+EmployeePin[21]="123";
+EmployeePin[22]="123";
+EmployeePin[23]="123";
+EmployeePin[24]="123";
+EmployeePin[25]="123";
 
 var TotalCost = 0;
 var Tax = 0;
@@ -149,17 +204,23 @@ var ClerkId = 0;
 var EnteredPin = "";
 var PrevKeyId = "";
 var NextPrevKeyId = "";
-var AcceptableKeyIds = new Array();
 var NumKeyIds = ["1","2","3","4","5","6","7","8","9","0","00"];
 var DeptKeyIds = ['PRINTING','26" LAMINA','12" LAMINA','PASSPORT','FAB 6 SURC','LATE FEE','CD DUPLICA','DVD DUPLIC','DVD AUTHOR','PREFLIGHT','USAGE FEES','POWERTABS','DVD MENU','COFFEE'];
 var CommandKeyIds = ['Clear','Void','QTY'];
 var PaymentKeyIds = ['PIN/CHECK','Subtotal','PAY CASH'];
 var AuxiliaryKeys = ['Feed','Clerk ID'];
-var FeeKeys = [];
+var FeeKeys = []; //todo: make these keys do something
 var TaxKeys = [];
+
+var ClerkingInKeys = NumKeyIds.concat(AuxiliaryKeys, 'Clear');
+var EnteringPinKeys = NumKeyIds.concat('PIN/CHECK','Feed');
+var ClerkedInKeys = NumKeyIds.concat(DeptKeyIds,CommandKeyIds,PaymentKeyIds,AuxiliaryKeys,FeeKeys,TaxKeys);
+
+var AcceptableKeyIds = ClerkingInKeys; //at the beginning, all you can do is clerk in
 
 var TaxRate = 0.06875;
 //or this? const TaxRate = 0.06875;
+
 var ItemPrice = new Array();
 ItemPrice['PRINTING']='0.50';
 ItemPrice['26" LAMINA']='1.50'; //todo:find this out
@@ -200,15 +261,35 @@ function InArray(Element, Array) {
     }
     return false;
 }
+/***********************************************************************
+Displays
+customer-display-upper
+    Displays information, including employee names and item names. The 
+    manual calls this the operator display.
+customer-display-lower
+    Currently only a span used to enclose the lower-left and lower-right
+    spans.
+customer-display-lower-left
+    Displays single characters like ".S" ".E" ".C" and KeyNum. This is 
+    half of what the manual calls the numeric display.
+customer-display-lower-right
+    Displays entered values, subtotals, and the like.
+***********************************************************************/
 function AppendDisplay(DisplayName, HTML) {
     document.getElementById(DisplayName).innerHTML += HTML;
-    //todo:move receipt down to active part
+    //todo:scroll receipt down to active part so it can be seen
 }
 function SetDisplay(DisplayName, HTML) {
     document.getElementById(DisplayName).innerHTML = HTML;
 }
 function ClearDisplay(DisplayName) {
     document.getElementById(DisplayName).innerHTML = "";
+}
+function ParseDollars() {
+    return parseFloat((document.getElementById('customer-display-lower-right').innerHTML) / 100.00);
+}
+function ParseNum() {
+    return parseInt((document.getElementById('customer-display-lower-right').innerHTML));
 }
 function PrintReceiptHeader(EmployeeName) {
     AppendDisplay('receipt', '<div class="receipt-header">MEDIA SERVICES<br>Olin Hall room 032<br>507 933 7459<br>mediaservices@gac.edu<br><br><br><br></div>');
@@ -242,26 +323,35 @@ function StopErrorTone() {
 function ThrowCashRegError(ErrorName) {
     ErrorState = true;
     SetDisplay('customer-display-upper', ErrorName);
+    SetDisplay('customer-display-upper', ErrorName);
     SetDisplay('customer-display-lower-left', '.E');
     PlayErrorTone();
 }
 function Checkout(PaymentType) {
     //calculate change, update displays and receipt, clock out
     //todo: tax
-    var Received = parseFloat(document.getElementById('customer-display-lower-right').innerHTML) / 100.00;
-    var Change = Received - TotalCost;
-    SetDisplay('customer-display-upper', 'CHANGE');
-    SetDisplay('customer-display-lower-left', '.C');
-    SetDisplay('customer-display-lower-right', Change.toFixed(2));
-    PrintReceiptTotals(PaymentType, TotalCost, Received, Change);
-    PrintReceiptFooter();
-    SetDisplay('big-button-container','<button class="cash-drawer" onClick="CloseCashDrawer()">Close Cash Drawer</button>');
+    var Received = ParseDollars();
+    if (Received < TotalCost) {
+        ThrowCashRegError('ERR'); //TODO: check what the actual error is
+    }
+    else {
+        var Change = Received - TotalCost;
+        SetDisplay('customer-display-upper', 'CHANGE');
+        SetDisplay('customer-display-lower-left', '.C');
+        SetDisplay('customer-display-lower-right', Change.toFixed(2));
+        PrintReceiptTotals(PaymentType, TotalCost, Received, Change);
+        PrintReceiptFooter();
+        SetDisplay('big-button-container','<button class="cash-drawer" onClick="CloseCashDrawer()">Close Cash Drawer</button>');
+    }
 }
 function CloseCashDrawer() {
     ClearDisplay('big-button-container');
-    ClerkedIn = false;
     SetDisplay('customer-display-lower-left', '');
     SetDisplay('customer-display-lower-right', 'PLEASE TAKE RECEIPT');
+    //todo: sleep 10 seconds, then go back to HELLO
+    //also, check concurrency issues
+    ClerkedIn = false;
+    AcceptableKeyIds = ClerkingInKeys;
 }
 function PressKey(KeyId, KeyNum) {
     if (KeyId == "Clear Receipt") {
@@ -281,14 +371,18 @@ function PressKey(KeyId, KeyNum) {
             ClearDisplay('customer-display-upper');
             ClearDisplay('customer-display-lower-left');
             ClearDisplay('customer-display-lower-right');
-            EnteredPin = "";
+            if (EnteringPin === true) {
+                EnteringPin = false;
+                EnteredPin = "";
+                AcceptableKeyIds = ClerkingInKeys;                
+            }
             return true;
         }
         else {
         return false;
         }
     }
-    if ( !InArray(KeyId, AcceptableKeyIds) && ClerkedIn == true) {
+    if ( !InArray(KeyId, AcceptableKeyIds) ) {
         ThrowCashRegError('ERROR')
         return false;
     }
@@ -308,11 +402,11 @@ function PressKey(KeyId, KeyNum) {
         }
         return true;
     }
-    if (ClerkedIn === true && InArray(KeyId, DeptKeyIds)) {//item keys, aka dept keys
+    if (InArray(KeyId, DeptKeyIds) && ClerkedIn === true) {//item keys, aka dept keys
         //ring up an item
         SetDisplay('customer-display-upper', KeyId);
         SetDisplay('customer-display-lower-left', KeyNum);
-        if (PrevKeyId === "Qty") {
+        if (PrevKeyId === "QTY") {
             TotalCost += parseFloat(ItemPrice[KeyId]) * Qty;
             SetDisplay('customer-display-lower-right',ItemPrice[KeyId]*Qty);
         }
@@ -328,13 +422,14 @@ function PressKey(KeyId, KeyNum) {
         AppendDisplay('receipt', '<div class="receipt-items">'+ReceiptString[KeyId]+'<br></div>'); //to do: make this actually match the amount charged, not a canned output
         return true;
         }
-    switch(KeyId) {//todo: set acceptable key ids
+    switch(KeyId) {//todo: set acceptable key ids for clear
         case "QTY" :
             if (InArray(PrevKeyId,NumKeyIds)) {
                 Qty = parseInt(PrevKeyId);
             }
             else {
                 ThrowCashRegError('ERROR')
+                alert("Previous key was not a number.");
                 return false;
             }
             break;
@@ -346,26 +441,35 @@ function PressKey(KeyId, KeyNum) {
             Qty = 0;
             break;
         case "Void" :
-            //todo: figure out this whole business
+            //todo: figure out this whole business  
+            //SetDisplay('customer-display-upper', 'VOID/CORR');
             break;
         case "Feed" :
             AppendDisplay('receipt', '<br>');
             break;
         case "Clerk ID" :
-            ClerkId = parseInt(PrevKeyId);//todo:fix this so this for multidigit ids can be parsed: document.getElementById('customer-display-lower-right').innerHTML
-            ClearDisplay('customer-display-upper');
-            SetDisplay('customer-display-lower-right','0.00');
-            EnteringPin = true;
+            ClerkId = ParseNum();
+            //TODO: check to make sure it is in the range 1 to 31 or whatever
+            if ( !isNaN(ClerkId) && ClerkId > 0 && ClerkId < EmployeeName.length) {
+                ClearDisplay('customer-display-upper');
+                SetDisplay('customer-display-lower-right','0.00');
+                EnteringPin = true;
+                AcceptableKeyIds = EnteringPinKeys;
+            }
+            else {
+                ThrowCashRegError("ERR");
+                alert("Could not recognize ID: "+ClerkId);
+            }
             break;
         case "PIN/CHECK" :
             if (EnteringPin === true && ClerkedIn === false && (EnteredPin === EmployeePin[ClerkId])) {
                 SetDisplay('customer-display-upper', EmployeeName[ClerkId]);
                 SetDisplay('customer-display-lower-left',ClerkId);
-                SetDisplay('customer-display-lower-right',"0.00");
+                SetDisplay('customer-display-lower-right','0.00');
                 PrintReceiptHeader(EmployeeName[ClerkId]);
                 ClerkedIn = true;
                 EnteringPin = false;
-                AcceptableKeyIds = AcceptableKeyIds.concat(NumKeyIds,DeptKeyIds,CommandKeyIds,PaymentKeyIds,AuxiliaryKeys,FeeKeys,TaxKeys);
+                AcceptableKeyIds = ClerkedInKeys;
             }
             else {
                 if (EnteringPin === true && ClerkedIn === false && (EnteredPin !== EmployeePin[ClerkId])) {
@@ -380,7 +484,7 @@ function PressKey(KeyId, KeyNum) {
                 }
             }
             break;
-        case "Subtotal" :
+        case "Subtotal" : //TODO: make subtotal include tax
             if (ClerkedIn === true) {
                 //print out the current total; do nothing to receipt
                 SetDisplay('customer-display-upper', 'SUBTTL');
@@ -394,7 +498,7 @@ function PressKey(KeyId, KeyNum) {
             }
             break;
         default :
-            alert("An unknown key has been pressed with id:"+KeyId);
+            alert("Programming Error: An incorrectly handled key has been pressed with id: "+KeyId);
         return true; //switch statement ends here
     }
 }
@@ -406,6 +510,10 @@ function stop_single_sound() {
     document.getElementById('audiotag1').pause();
     document.getElementById('audiotag1').currentTime = 0;
 }
+<audio id="ErrorTone" autobuffer="autobuffer" preload="auto" loop>
+    <source src="synthesized_error_sound1.wav" type="audio/wav">
+    <source src="synthesized_error_sound1.mp3" type="audio/mp3">
+</audio>
 */
 </script> 
 <title>Media Services Cash Register Emulator v0.36</title>
@@ -421,8 +529,8 @@ function stop_single_sound() {
     </p>
     -->
 <audio id="ErrorTone" autobuffer="autobuffer" preload="auto" loop>
-    <source src="synthesized_error_sound1.wav" type="audio/wav">
     <source src="synthesized_error_sound1.mp3" type="audio/mp3">
+    <source src="synthesized_error_sound1.wav" type="audio/wav">
 </audio>
 <table id="CashRegisterDisplayTable">
     <form name="CashRegisterDisplay">
@@ -477,7 +585,7 @@ function stop_single_sound() {
             <table id="CommandKeys" border="1" align=center>
                 <tr>
                     <td><button class="command-key">Coupon</button></td>
-                    <td><button class="command-key yellow-bg" onClick="PressKey('Void')">Entered&nbsp;Itm<br>Quantity<br>QTY</button></td>
+                    <td><button class="command-key yellow-bg" onClick="PressKey('QTY')">Entered&nbsp;Itm<br>Quantity<br>QTY</button></td>
                 </tr>
                 <tr>
                     <td><button class="command-key">Account<br>Receive</button></td>
