@@ -1,6 +1,9 @@
 This is an emulator for a Royal model Alpha 601SC cash register
 that I wrote between October 2010 and September 2011
 for training purposes.
+You can try it here:
+
+<https://nbeaver.github.io/cash-register-emulator/>
 
 At the time I was an undergraduate student at [Gustavus Adolphus College](https://gustavus.edu/)
 and my campus employment was at Media Services.
