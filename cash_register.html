@@ -1,30 +1,65 @@
 <html>
-<title>
-Media Services Cash Register Emulator
-</title>
 <head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">	
 <style type="text/css">
 button.dept-key
 {
 	font-size:10px;
-	width:60;
-	height:60;
+	width:60px;
+	height:60px;
 	background-color:white;
 }
 button.fee-key
 {
-	width:60;
-	height:60;
+	width:60px;
+	height:60px;
 }
 button.number-key
 {
-	width:40;
-	height:40;
+	width:40px;
+	height:40px;
 }
 button.payment-key
 {
-	width:60;
-	height:60;
+	width:60px;
+	height:60px;
+}
+button.total-key
+{
+	width:120px;
+	height:60px;
+	background-color:red;
+	color:white;
+}
+
+#receipt 
+{
+	background-color:white;
+	height:300px;
+	width:210px;
+	font-family:monospace;
+	float:left;
+	overflow-y:scroll;
+}
+p.receipt-header {text-align:center;}
+p.receipt-clerkin {text-align:left;}
+p.receipt-items {text-align:justify;}
+p.receipt-totals {text-align:justify}
+p.receipt-timestamp {text-align:right;}
+p.receipt-footer {text-align:center;}
+
+#customer-display 
+{
+	align:left;
+	height:70px;
+	width:500px;
+	color:green; 
+	background-color:black; 
+	font-size:300%; 
+	font-family:courier,monospace; 
+	white-space:nowrap; 
+	overflow:auto;
+	float: right;
 }
 </style>
 <script language="JavaScript" type="text/javascript">
@@ -34,53 +69,156 @@ Employees[1]="First Employee";
 Employees[2]="Second Employee";
 Employees[3]="Third Employee";
 
-var ID = new Array();
-ID["Zeroth Employee"]="123";
-var ErrorState = false;
-//var ReceiptStr = ""
-//var CustomerDisplayStr = "HELLO"
+var EmployeeIds = new Array();
+EmployeeIds["Zeroth Employee"]="123";
+EmployeeIds["First Employee"]="456";
+EmployeeIds["Second Employee"]="789";
+EmployeeIds["Third Employee"]="012";
 
+var ErrorState = false;
+var EnteringPin = false;
+var NumKeyIds = new Array("Num1","Num2","Num3","Num4","Num5","Num6","Num7","Num8","Num9","Num0","Num00");
+var ItemKeyIds = new Array("PassportPics", "DVDAuth","Coffee","12InchLam","DVDDup","DVDMenu","26InchLam","CDDup","PowerTabs","LrgFrmtPrnt","LateFee","UsageFee");
+
+var DisplayString = new Array();
+DisplayString["Num1"]="1";
+
+var ReceiptString = new Array();
+ReceiptString["PassportPics"]='<p class="receipt-items">PASSPORT *5.00T1</p>'
+
+function InArray(Element, Array) {
+    for (var i in Array) {
+		if (i === Element) {
+		    return true;
+		}
+	}
+	return false;
+}
+
+function PressKey(KeyId) {
+	if (ErrorState == true) {
+	    if (KeyId == "Clear") {
+		    ErrorState = false;
+			StopErrorTone();
+		}
+		else {
+		//do nothing
+		}
+	}
+	else {//ErrorState == False
+	    //check if it's a number key or item key
+		if (InArray(KeyId, NumKeyIds)) {
+			//do number key stuff
+			if (EnteringPin == true) {
+				AppendCustomerDisplay("*");
+			}
+			else {
+				AppendCustomerDisplay("")//todo:appropriate number here
+			}
+		}
+		else {
+			if (InArray(KeyId, ItemKeyIds)) {
+			//do item key stuff
+			}
+			else {
+				switch(KeyId) {
+					case "PIN/CHECK" :
+						
+						break;
+					default :
+						//Some other key--don't worry about it?
+				}
+			}
+		}
+	}
+}
+
+	
 function AppendCustomerDisplay(Text) {
-	document.CashRegisterDisplay.CustomerDisplay.value += Text;
+    document.getElementById('customer-display').innerHTML += Text;
 }
 function SetCustomerDisplay(Text) {
-	document.CashRegisterDisplay.CustomerDisplay.value = Text;
+    document.getElementById('customer-display').innerHTML = Text;
 }
 function ClearCustomerDisplay() {
-	document.CashRegisterDisplay.CustomerDisplay.value = "";
+    document.getElementById('customer-display').innerHTML = "";
 }
 function AppendReceipt(Text) {
-	document.CashRegisterDisplay.Receipt.value += Text;
+    document.getElementById('receipt').innerHTML += Text;
 }
-</script>
-<noscript>
-This emulator uses Javascript. Your browser either doesn't support Javascript or you have it turned off.
-</noscript> 
+
+function PlayErrorTone() {
+    document.getElementById('ErrorTone').play();
+}
+function StopErrorTone() {
+    document.getElementById('ErrorTone').stop();
+}
+
+function play_single_sound() {
+    document.getElementById('audiotag1').play();
+}
+function stop_single_sound() {
+    document.getElementById('audiotag1').stop();
+}
+
+</script> 
+<title>Media Services Cash Register Emulator 2.1</title>
 </head>
 <body>
-<form name="CashRegisterDisplay">
-	<textarea name="Receipt" style="font-family:monospace; white-space:nowrap; overflow:auto;" cols="24" rows="5" READONLY></textarea>
-	<textarea name="CustomerDisplay" style="color:green; background-color:black; font-size:300%; font-family:courier,monospace; white-space:nowrap; overflow:auto;" cols="24" rows="1" READONLY></textarea>
-</form>
-<br>
+<noscript>This emulator uses Javascript. Your browser either doesn't support Javascript or you have it turned off.</noscript>
+	<audio id="audiotag1" autobuffer="autobuffer"><source src="cash_reg_5sec_error_tone_3kHz.wav" type="audio/wav"></audio>
+
+	<p>
+
+		<a href="javascript:play_single_sound();">Play 5-sec sound on single channel</a>
+		<a href="javascript:stop_single_sound();">Stop 5-sec sound on single channel</a>
+	</p>
+
+<table id="CashRegisterDisplayTable">
+	<form name="CashRegisterDisplay">
+	<tr>
+		<td> 
+			<div id="receipt">
+
+			<p class="receipt-header">MEDIA SERVICES<br>Olin Hall room 032<br>507 933 7459<br>mediaservices@gac.edu</p>
+			<p class="receipt-clerkin">01-01-2011&nbsp;&nbsp;&nbsp;&nbsp;MC #:0000<br>ZAPHOD B</p>
+			<p class="receipt-items">PASSPORT *5.00T1</p>
+			<p class="receipt-totals">------------------------<br><b>TOTAL</b>*5.34<br>AMOUNT *6.00<br>CHANGE *0.66</p>
+
+			<p class="receipt-timestamp">PM 3-31   ****</p>
+			<p class="receipt-footer">Thank you for visiting! <br>Please let us know how <br>we are doing.</p>
+			</div>
+		</td>
+		<td>
+			<div id="customer-display">
+			HELLO
+			</div>
+
+		</td>
+	</tr>
+	</form>
+</table>
 <table id="CashRegisterKeyboard" border="1" align=left>
 	<tr>
 		<td></td>
 		<td>
 			<table id="AuxiliaryKeys" border="1" align=center>
 				<tr>
-					<td><button style="width:60;height:60;background-color:white">Feed</button></td>
-					<td><button style="width:60;height:60;background-color:orange;color:white">Clerk<br>ID</button></td>
-					<td><button style="width:60;height:60">Shift</button></td>
+
+					<td><button style="width:60px;height:60px;background-color:white">Feed</button></td>
+					<td><button style="width:60px;height:60px;background-color:orange;color:white">Clerk<br>ID</button></td>
+					<td><button style="width:60px;height:60px">Shift</button></td>
 				</tr>
 			</table>
 		</td>
 		<td>
+
 			<table id="FeeKeys" border="1">
 				<tr>
 					<td><button class="fee-key">5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E/Y<br>FAB6<br>Surcharg</button></td>
 					<td><button class="fee-key">10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;J<br>Preflight<br>Fee</button></td>
 					<td><button class="fee-key">15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O</button></td>
+
 					<td><button class="fee-key">20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T</button></td>
 				</tr>
 			</table>
@@ -88,8 +226,9 @@ This emulator uses Javascript. Your browser either doesn't support Javascript or
 		<td>	
 			<table id="TaxKeys" border="1" align=center>
 				<tr>
-					<td><button style="width:60;height:60">Tax1</button></td>
-					<td><button style="width:60;height:60">Tax2</button></td>
+					<td><button style="width:60px;height:60px">Tax1</button></td>
+
+					<td><button style="width:60px;height:60px">Tax2</button></td>
 				</tr>
 			</table>
 		</td>
@@ -97,25 +236,29 @@ This emulator uses Javascript. Your browser either doesn't support Javascript or
 	<tr>
 		<td>
 			<table id="CommandKeys" border="1" align=center>
+
 				<tr>
-					<td><button style="width:60;height:60">Coupon</button></td>
-					<td><button style="width:60;height:60;background-color:yellow">Entered&nbsp;Itm<br>Quantity<br>QTY</td>
+					<td><button style="width:60px;height:60px">Coupon</button></td>
+					<td><button style="width:60px;height:60px;background-color:yellow">Entered&nbsp;Itm<br>Quantity<br>QTY</button></td>
 				</tr>
 				<tr>
-					<td><button style="width:60;height:60">Account<br>Receive</button></td>
-					<td><button style="width:60;height:60">Account<br>Pay&nbsp;Out</button></td>
+					<td><button style="width:60px;height:60px">Account<br>Receive</button></td>
+
+					<td><button style="width:60px;height:60px">Account<br>Pay&nbsp;Out</button></td>
 				</tr>
 				<tr>
-					<td><button style="width:60;height:60">Alternate<br>PLU<br>Price</button></td>
-					<td><button style="width:60;height:60">PLU</button></td>
+					<td><button style="width:60px;height:60px">Alternate<br>PLU<br>Price</button></td>
+					<td><button style="width:60px;height:60px">PLU</button></td>
+
 				</tr>
 				<tr>
-					<td><button style="width:60;height:60;background-color:white">Clear</td>
-					<td><button style="width:60;height:60;background-color:white">Void</td>
+					<td><button style="width:60px;height:60px;background-color:white">Clear</button></td>
+					<td><button style="width:60px;height:60px;background-color:white">Void</button></td>
 				</tr>
 			</table>
 		</td>
 		<td>
+
 			<table id="NumberKeys" border="1" cellspacing="15"align=center>
 				<tr>
 					<td><button class="number-key" onClick="AppendCustomerDisplay('7')">7</button></td>
@@ -123,6 +266,7 @@ This emulator uses Javascript. Your browser either doesn't support Javascript or
 					<td><button class="number-key" onClick="AppendCustomerDisplay('9')">9</button></td>
 				</tr>
 				<tr>
+
 					<td><button class="number-key" onClick="AppendCustomerDisplay('4')">4</button></td>
 					<td><button class="number-key" onClick="AppendCustomerDisplay('5')">5</button></td>
 					<td><button class="number-key" onClick="AppendCustomerDisplay('6')">6</button></td>
@@ -130,6 +274,7 @@ This emulator uses Javascript. Your browser either doesn't support Javascript or
 				<tr>
 					<td><button class="number-key" onClick="AppendCustomerDisplay('1')">1</button></td>
 					<td><button class="number-key" onClick="AppendCustomerDisplay('2')">2</button></td>
+
 					<td><button class="number-key" onClick="AppendCustomerDisplay('3')">3</button></td>
 				</tr>
 				<tr>
@@ -137,37 +282,43 @@ This emulator uses Javascript. Your browser either doesn't support Javascript or
 					<td><button class="number-key" onClick="AppendCustomerDisplay('00')">00</button></td>
 					<td></td>
 				</tr>
+
 			</table>
 		</td>
 		<td>
 			<table id="DepartmentKeys" border="1" align=center>
 				<tr>
 					<td><button class="dept-key">4&nbsp;&nbsp;&nbsp;&nbsp;D/X<br>Set&nbsp;of&nbsp;2<br>Passport<br>Photos</button></td>
+
 					<td><button class="dept-key">9&nbsp;&nbsp;&nbsp;&nbsp;I<br>DVD<br>Authorin</button></td>
 					<td><button class="dept-key">14&nbsp;&nbsp;&nbsp;&nbsp;N<br>COFFEE</button></td>
 					<td><button class="dept-key">19&nbsp;&nbsp;&nbsp;&nbsp;S</button></td>
 				</tr>
+
 				<tr>
 					<td><button class="dept-key">
-							<table id="12-inch-laminate-button">
+							<table id="twelve-inch-laminate-button">
 								<tr>
 									<td class="header" style="font-size:10px">3&nbsp;&nbsp;&nbsp;&nbsp;C/W</td>
 								</tr>
 								<tr>
 									<td class="blue-label" style="background-color:blue;font-size:10px">12"<br>Laminate</td>
+
 								</tr>
 							</table>
 						</button>
 					</td>
 					<td><button class="dept-key">8&nbsp;&nbsp;&nbsp;&nbsp;H<br>DVD<br>Duplicat.</button></td>
 					<td><button class="dept-key">13&nbsp;&nbsp;&nbsp;&nbsp;M<br>DVD<br>Menu</button></td>
+
 					<td><button class="dept-key">18&nbsp;&nbsp;&nbsp;&nbsp;R</button></td>
 				</tr>
 				<tr>
 					<td><button class="dept-key">
-							<table id="26-inch-laminate-button">
+							<table id="twenty-six-inch-laminate-button">
 								<tr>
 									<td class="header" style="font-size:10px">2&nbsp;&nbsp;&nbsp;&nbsp;B/V</td>
+
 								</tr>
 								<tr>
 									<td class="blue-label" style="background-color:blue;font-size:10px">26"<br>Laminate</td>
@@ -176,63 +327,79 @@ This emulator uses Javascript. Your browser either doesn't support Javascript or
 						</button>
 					</td>
 					<td><button class="dept-key">7&nbsp;&nbsp;&nbsp;&nbsp;G<br>CD<br>Duplicat.</button></td>
+
 					<td><button class="dept-key">12&nbsp;&nbsp;&nbsp;&nbsp;L<br>Power<br>Tabs<br>(Grommets)</button></td>
 					<td><button class="dept-key">17&nbsp;&nbsp;&nbsp;&nbsp;Q</button></td>
 				</tr>
 				<tr>
-					<td><button class="dept-key">
+					<td>
+
+						<button class="dept-key">
 							<table id="large-format-printing-button">
 								<tr>
 									<td class="header" style="font-size:10px">1&nbsp;&nbsp;&nbsp;&nbsp;A/U</td>
 								</tr>
 								<tr>
 									<td class="green-label" style="background-color:green;font-size:10px;color=white;">Lrg&nbsp;Fmt.<br>Printing<br>(Price)</td>
+
 								</tr>
 							</table>
+						</button>
 					</td>
-					<td><button class="dept-key">
+					<td>
+						<button class="dept-key">
 							<table id="late_fee_button">
 								<tr>
 									<td class="header" style="font-size:10px">6&nbsp;&nbsp;&nbsp;&nbsp;F/Z</td>
+
 								</tr>
 								<tr>
 									<td class="green-label" style="background-color:green;font-size:10px;color=white;">Late<br>Fee</td>
 								</tr>
 							</table>
+						</button>
 					</td>
-					<td><button class="dept-key">
+					<td>
+
+						<button class="dept-key">
 							<table id="usage_fee_button">
 								<tr>
 									<td class="header" style="font-size:10px">11&nbsp;&nbsp;&nbsp;&nbsp;K</td>
 								</tr>
 								<tr>
 									<td class="green-label" style="background-color:green;font-size:10px;color=white;">Usage<br>Fee</td>
+
 								</tr>
 							</table>
+						</button>
 					</td>
 					<td><button class="dept-key">16&nbsp;&nbsp;&nbsp;&nbsp;P</button></td>
 				</tr>
 			</table>
 		</td>
+
 		<td>
 			<table id="PaymentKeys" border="1" align=center>
 				<tr>
-					<td><button class="payment-key" style="width:60;height:60">Non-tax</button></td>
-					<td><button style="width:60;height:60;background-color:red;color:white">PIN<hr>CHECK</button></td>
+					<td><button class="payment-key">Non-tax</button></td>
+					<td><button class="payment-key" style="background-color:red;color:white">PIN<hr>CHECK</button></td>
 				</tr>
 				<tr>
-					<td><button style="width:60;height:60">Return</button></td>
-					<td><button style="width:60;height:60">Charge</button></td>
+
+					<td><button class="payment-key">Return</button></td>
+					<td><button class="payment-key">Charge</button></td>
 				</tr>
 				<tr>
-					<td><button style="width:60;height:60;background-color:red;color:white">Sub<br>total</button></td>
-					<td><button style="width:60;height:60">Items<br>Subtotal<br>No&nbsp;Sale</button></td>
+					<td><button class="payment-key" style="background-color:red;color:white">Sub<br>total</button></td>
+					<td><button class="payment-key">Items<br>Subtotal<br>No&nbsp;Sale</button></td>
+
 				</tr>
 				<tr>
-					<td colspan="2"><button style="width:120;height:60;background-color:red;color:white">Amount&nbsp;Tend&nbsp;Total<br>PAY&nbsp;CASH</button></td>
+					<td colspan="2"><button class="total-key" onclick="javascript:play_single_sound();">Amount&nbsp;Tend&nbsp;Total<br>PAY&nbsp;CASH</button></td>
 				</tr>
 			</table>
 		</td>
+
 	</tr>
 </table>
 </body>
