@@ -80,15 +80,17 @@ p.receipt-footer {text-align:center;}
 }
 </style>
 <script language="JavaScript" type="text/javascript">
-//	Program: ROYAL alpha 601sc cash management system emulator 
-//	Author: Nathaniel Beaver
-//	Date: February 10, 2011
-//	Begun in September 2010 and worked on sporadically since then, this 
-// cash register emulator is my first web application. Those familiar 
-// with Javascript will note the total lack of object-oriented design 
-// and egregious use of global variables, which is a by-product of my
-// familiarity with C. This was largely written using Geany and Firebug
-// on Ubuntu 10.04.
+/*
+Program: ROYAL alpha 601sc cash management system emulator 
+Author: Nathaniel Beaver
+Date: February 10, 2011
+Begun in September 2010 and worked on sporadically since then, this 
+cash register emulator is my first web application. Those familiar 
+with Javascript will note the total lack of object-oriented design 
+and egregious use of global variables, which is a by-product of my 
+familiarity with C. This was largely written using Geany and Firebug 
+on Ubuntu 10.04 (Lucid Lynx).
+*/
 var EmployeeName = new Array();
 EmployeeName[1]="ZAPHOD B";
 EmployeeName[2]="FORD P";
@@ -110,8 +112,8 @@ var ClerkedIn = false;
 var ClerkId = 0;
 var EnteredPin = "";
 var AcceptableKeyIds = new Array();
-var NumKeyIds = new Array("1","2","3","4","5","6","7","8","9","0","00");
-var ItemKeyIds = new Array('PRINTING','26" LAMINA','12" LAMINA','PASSPORT','FAB 6 SURC','LATE FEE','CD DUPLICA','DVD DUPLIC','DVD AUTHOR','PREFLIGHT','USAGE FEES','POWERTABS','DVD MENU','COFFEE');
+var NumKeyIds = ["1","2","3","4","5","6","7","8","9","0","00"];
+var ItemKeyIds = ['PRINTING','26" LAMINA','12" LAMINA','PASSPORT','FAB 6 SURC','LATE FEE','CD DUPLICA','DVD DUPLIC','DVD AUTHOR','PREFLIGHT','USAGE FEES','POWERTABS','DVD MENU','COFFEE'];
 
 var ItemPrice = new Array();
 ItemPrice['PRINTING']='0.50';
@@ -146,6 +148,36 @@ ReceiptString['POWERTABS']='POWERTABS *1.00T1';
 ReceiptString['DVD MENU']='DVD MENU *30.00T1';
 ReceiptString['COFFEE']='COFFEE *0.50  ';
 
+function InArray(Element, Array) {
+    for (var i in Array) {
+		if (Array[i] == Element) {
+		    return true;
+		}
+	}
+	return false;
+}
+function AppendDisplay(DisplayName, HTML) {
+    document.getElementById(DisplayName).innerHTML += HTML;
+}
+function SetDisplay(DisplayName, HTML) {
+    document.getElementById(DisplayName).innerHTML = HTML;
+}
+function ClearDisplay(DisplayName) {
+    document.getElementById(DisplayName).innerHTML = "";
+}
+function PrintReceiptHeader(EmployeeName) {
+	AppendDisplay('receipt', '<p class="receipt-header">MEDIA SERVICES<br>Olin Hall room 032<br>507 933 7459<br>mediaservices@gac.edu</p>');
+	var d = new Date();
+	var DateStr = d.getMonth() + "-" + d.getDate() + "-" + d.getFullYear();
+	AppendDisplay('receipt', '<p class="receipt-clerkin">'+DateStr+'&nbsp;&nbsp;&nbsp;&nbsp;MC #:0000<br>'+EmployeeName+'</p>');
+}
+
+function PlayErrorTone() {
+    document.getElementById('ErrorTone').play();
+}
+function StopErrorTone() {
+    document.getElementById('ErrorTone').stop();
+}
 function PressKey(KeyId, KeyNum) {
 	if (KeyNum === undefined) {//KeyNum is optional, since only dept-keys have them
 		KeyNum = "";
@@ -191,7 +223,7 @@ function PressKey(KeyId, KeyNum) {
 		case "Clear" :
 			ClearDisplay('customer-display-upper');
 			ClearDisplay('customer-display-lower');
-			//todo: clear the display, since error should have been caught before this
+			//todo: clear the display, since ErrorState should have been caught before this
 			break;
 		case "Void" :
 			//todo: figure out this whole business
@@ -227,36 +259,6 @@ function PressKey(KeyId, KeyNum) {
 			return true;
 	}
 }
-function InArray(Element, Array) {
-    for (var i in Array) {
-		if (Array[i] == Element) {
-		    return true;
-		}
-	}
-	return false;
-}	
-function AppendDisplay(DisplayName, HTML) {
-    document.getElementById(DisplayName).innerHTML += HTML;
-}
-function SetDisplay(DisplayName, HTML) {
-    document.getElementById(DisplayName).innerHTML = HTML;
-}
-function ClearDisplay(DisplayName) {
-    document.getElementById(DisplayName).innerHTML = "";
-}
-function PrintReceiptHeader(EmployeeName) {
-	AppendDisplay('receipt', '<p class="receipt-header">MEDIA SERVICES<br>Olin Hall room 032<br>507 933 7459<br>mediaservices@gac.edu</p>');
-	d = new Date();
-	DateStr = d.getMonth() + "-" + d.getDate() + "-" + d.getFullYear();
-	AppendDisplay('receipt', '<p class="receipt-clerkin">'+DateStr+'&nbsp;&nbsp;&nbsp;&nbsp;MC #:0000<br>'+EmployeeName+'</p>');
-}
-
-function PlayErrorTone() {
-    document.getElementById('ErrorTone').play();
-}
-function StopErrorTone() {
-    document.getElementById('ErrorTone').stop();
-}
 
 function play_single_sound() {
     document.getElementById('audiotag1').play();
@@ -264,7 +266,6 @@ function play_single_sound() {
 function stop_single_sound() {
     document.getElementById('audiotag1').stop();
 }
-
 </script> 
 <title>Media Services Cash Register Emulator v0.31</title>
 </head>
