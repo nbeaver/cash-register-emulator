@@ -425,7 +425,7 @@ function PressKey(KeyId, KeyNum) {
     switch(KeyId) {//todo: set acceptable key ids for clear
         case "QTY" :
             if (InArray(PrevKeyId,NumKeyIds)) {
-                Qty = parseInt(PrevKeyId);
+                Qty = parseInt(PrevKeyId); //todo: make sure it doesn't stay this quantity for all the following items
             }
             else {
                 ThrowCashRegError('ERROR')
