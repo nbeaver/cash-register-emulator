@@ -158,9 +158,11 @@ var AuxiliaryKeys = ['Feed','Clerk ID'];
 var FeeKeys = [];
 var TaxKeys = [];
 
+var TaxRate = 0.06875;
+//or this? const TaxRate = 0.06875;
 var ItemPrice = new Array();
 ItemPrice['PRINTING']='0.50';
-ItemPrice['26" LAMINA']=''; //todo:find this out
+ItemPrice['26" LAMINA']='1.50'; //todo:find this out
 ItemPrice['12" LAMINA']='0.15';
 ItemPrice['PASSPORT']='5.00';
 ItemPrice['FAB 6 SURC']='25.00';
@@ -308,14 +310,22 @@ function PressKey(KeyId, KeyNum) {
 	}
 	if (ClerkedIn === true && InArray(KeyId, DeptKeyIds)) {//item keys, aka dept keys
 		//ring up an item
-		if (Qty < 1) Qty = 1; //must be at least one item		
-		TotalCost += parseFloat(ItemPrice[KeyId]) * Qty; 
-		//todo:check if PrevKeyId == "Qty" and parse the display if it isn't. Does this work for every key?
-		SetDisplay('customer-display-upper', KeyId);
+        SetDisplay('customer-display-upper', KeyId);
 		SetDisplay('customer-display-lower-left', KeyNum);
-		SetDisplay('customer-display-lower-right',ItemPrice[KeyId]);
-		//<div class="receipt-items">PASSPORT<span class="right-side">*5.00T1</span><br></div>
-		AppendDisplay('receipt', '<div class="receipt-items">'+ReceiptString[KeyId]+'<br></div>');
+		if (PrevKeyId === "Qty") {
+            TotalCost += parseFloat(ItemPrice[KeyId]) * Qty;
+            SetDisplay('customer-display-lower-right',ItemPrice[KeyId]*Qty);
+        }
+        else if (InArray(PrevKeyId, NumKeyIds)){
+            //price override, e.g. printing
+            TotalCost += parseFloat(document.getElementById('customer-display-lower-right').innerHTML) / 100.00;
+        }
+        else { //only one of the item
+            TotalCost += parseFloat(ItemPrice[KeyId])
+            SetDisplay('customer-display-lower-right',ItemPrice[KeyId]);
+        }
+		//e.g. <div class="receipt-items">PASSPORT<span class="right-side">*5.00T1</span><br></div>
+		AppendDisplay('receipt', '<div class="receipt-items">'+ReceiptString[KeyId]+'<br></div>'); //to do: make this actually match the amount charged, not a canned output
 		return true;
 		}
 	switch(KeyId) {//todo: set acceptable key ids
@@ -333,6 +343,7 @@ function PressKey(KeyId, KeyNum) {
 			ClearDisplay('customer-display-lower-left');
 			ClearDisplay('customer-display-lower-right');
 			EnteredPin = "";
+            Qty = 0;
 			break;
 		case "Void" :
 			//todo: figure out this whole business
@@ -371,12 +382,10 @@ function PressKey(KeyId, KeyNum) {
 			break;
 		case "Subtotal" :
 			if (ClerkedIn === true) {
+                //print out the current total; do nothing to receipt
 				SetDisplay('customer-display-upper', 'SUBTTL');
 				SetDisplay('customer-display-lower-left','.S');
 				SetDisplay('customer-display-lower-right',TotalCost.toFixed(2));
-				//print out the current total; do nothing to receipt
-				//SUBTTL
-				//.S 106.91
 			}
 			break;
 		case "PAY CASH" :
@@ -385,7 +394,7 @@ function PressKey(KeyId, KeyNum) {
 			}
 			break;
 		default :
-			//Some other key--don't worry about it?
+			alert("An unknown key has been pressed with id:"+KeyId);
 		return true; //switch statement ends here
 	}
 }
@@ -412,8 +421,8 @@ function stop_single_sound() {
 	</p>
 	-->
 <audio id="ErrorTone" autobuffer="autobuffer" preload="auto" loop>
-	<source src="cash_reg_5sec_error_tone_3kHz.wav" type="audio/wav">
-	<source src="cash_reg_5sec_error_tone_3kHz.mp3" type="audio/mp3">
+	<source src="synthesized_error_sound1.wav" type="audio/wav">
+	<source src="synthesized_error_sound1.mp3" type="audio/mp3">
 </audio>
 <table id="CashRegisterDisplayTable">
 	<form name="CashRegisterDisplay">
