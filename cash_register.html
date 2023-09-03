@@ -48,7 +48,7 @@ p.receipt-totals {text-align:justify}
 p.receipt-timestamp {text-align:right;}
 p.receipt-footer {text-align:center;}
 
-#customer-display 
+#customer-display-upper
 {
 	align:left;
 	height:70px;
@@ -59,33 +59,151 @@ p.receipt-footer {text-align:center;}
 	font-family:courier,monospace; 
 	white-space:nowrap; 
 	overflow:auto;
-	float: right;
+	float:left;
+	text-align:left;
+}
+#customer-display-lower
+{
+	align:right;
+	height:70px;
+	width:500px;
+	color:green; 
+	background-color:black; 
+	font-size:300%; 
+	font-family:courier,monospace; 
+	white-space:nowrap; 
+	overflow:auto;
+	float:right;
+	text-align:right;
 }
 </style>
 <script language="JavaScript" type="text/javascript">
-var Employees = new Array();
-Employees[0]="Zeroth Employee";
-Employees[1]="First Employee";
-Employees[2]="Second Employee";
-Employees[3]="Third Employee";
+var EmployeeName = new Array();
+EmployeeName[1]="ZAPHOD";
+EmployeeName[2]="FORD";
+EmployeeName[3]="SLARTIBARFAST";
 
-var EmployeeIds = new Array();
-EmployeeIds["Zeroth Employee"]="123";
-EmployeeIds["First Employee"]="456";
-EmployeeIds["Second Employee"]="789";
-EmployeeIds["Third Employee"]="012";
+var EmployeePin = new Array();
+EmployeePin["First Employee"]="123";
+EmployeePin["Second Employee"]="456";
+EmployeePin["Third Employee"]="789";
 
+var TotalCost = 0;
+var Tax = 0;
+var Qty = 0;
 var ErrorState = false;
 var EnteringPin = false;
-var NumKeyIds = new Array("Num1","Num2","Num3","Num4","Num5","Num6","Num7","Num8","Num9","Num0","Num00");
-var ItemKeyIds = new Array("PassportPics", "DVDAuth","Coffee","12InchLam","DVDDup","DVDMenu","26InchLam","CDDup","PowerTabs","LrgFrmtPrnt","LateFee","UsageFee");
+var ClerkedIn = false;
+var ClerkId = 0;
+var EnteredPin = "";
+var AcceptableKeyIds = new Array();
+var NumKeyIds = new Array("1","2","3","4","5","6","7","8","9","0","00");
+var ItemKeyIds = new Array('PRINTING','26" LAMINA','12" LAMINA','PASSPORT','FAB 6 SURC','LATE FEE','CD DUPLICA','DVD DUPLIC','DVD AUTHOR','PREFLIGHT','USAGE FEES','POWERTABS','DVD MENU','COFFEE');
 
-var DisplayString = new Array();
-DisplayString["Num1"]="1";
+var ItemPrice = new Array();
+ItemPrice['PRINTING']='0.50';
+ItemPrice['26" LAMINA']=''; //todo:find this out
+ItemPrice['12" LAMINA']='0.15';
+ItemPrice['PASSPORT']='5.00';
+ItemPrice['FAB 6 SURC']='25.00';
+ItemPrice['LATE FEE']='0.12';
+ItemPrice['CD DUPLICA']='4.00';
+ItemPrice['DVD DUPLIC']='5.00';
+ItemPrice['DVD AUTHOR']='50.00';
+ItemPrice['PREFLIGHT']='10.00';
+ItemPrice['USAGE FEES']='0.14';
+ItemPrice['POWERTABS']='1.00';
+ItemPrice['DVD MENU']='30.00';
+ItemPrice['COFFEE']='0.50';
 
+//<p class="receipt-items">PASSPORT *5.00T1</p>
 var ReceiptString = new Array();
-ReceiptString["PassportPics"]='<p class="receipt-items">PASSPORT *5.00T1</p>'
+ReceiptString['PRINTING']='PRINTING *0.50T1';
+ReceiptString['26" LAMINA']=''; //todo:find this out
+ReceiptString['12" LAMINA']='12" LAMINATE *0.15T1';
+ReceiptString['PASSPORT']='PASSPORT *5.00T1';
+ReceiptString['FAB 6 SURC']='FAB 6 SURCHG *25.00T1';
+ReceiptString['LATE FEE']='LATE FEE *0.12  ';
+ReceiptString['CD DUPLICA']='CD DUPLICAT *4.00T1';
+ReceiptString['DVD DUPLIC']='DVD DUPLICAT *4.00T1';
+ReceiptString['DVD AUTHOR']='DVD AUTHORIN *50.00T1';
+ReceiptString['PREFLIGHT']='PREFLIGHT *10.00T1';
+ReceiptString['USAGE FEES']='USAGE FEES *0.14  ';
+ReceiptString['POWERTABS']='POWERTABS *1.00T1';
+ReceiptString['DVD MENU']='DVD MENU *30.00T1';
+ReceiptString['COFFEE']='COFFEE *0.50  ';
 
+function PressKey(KeyId, KeyNum) {
+	if (KeyNum === undefined) {//KeyNum is optional, since only dept-keys have them
+		KeyNum = "";
+	}
+	if (ErrorState == true) {
+	    if (KeyId == "Clear") {
+		    ErrorState = false;
+			StopErrorTone();
+			return true;
+		}
+		else {
+		return false;
+		}
+	}
+//	if ( ! InArray(KeyId, AcceptableKeyIds)) {
+//		ErrorState = true;
+//		AppendDisplay('customer-display-upper', 'ERROR');
+//		PlayErrorTone();
+//		return false;
+//	}
+	if (InArray(KeyId, NumKeyIds)) {//numerical keypad
+		if (EnteringPin == true) {
+			ClerkPin += KeyId;
+			AppendDisplay('customer-display-lower', '*');
+		}
+		else {
+			AppendDisplay('customer-display-lower', KeyId);
+		}
+		return true;
+	}
+	if (InArray(KeyId, ItemKeyIds)) {//item keys, aka dept keys
+		Qty = 1;//todo:make this generic
+		TotalCost += parseFloat(ItemPrice[KeyId]) * Qty; //todo:fix this for more quantities and things like printing
+		SetDisplay('customer-display-lower', KeyId);
+		AppendDisplay('receipt', '<p class="receipt-items">'+ReceiptString[KeyId]+'</p>');
+		return true;
+		}
+	switch(KeyId) {//todo: set acceptable key ids
+		case "QTY" :
+			//todo: look at the customer-display-lower
+			break;
+		case "Clear" :
+			//todo: clear the display, since error should have been caught before this
+			break;
+		case "Void" :
+			//todo: figure out this whole business
+			break;
+		case "Feed" :
+			//todo: add a <br> to the receipt
+			break;
+		case "Clerk ID" :
+			ClerkId = parseInt(document.getElementById('customer-display-lower').innerHTML);
+			ClearDisplay('customer-display-upper');
+			EnteringPin = true;
+			break;
+		case "PIN/CHECK" :
+			if (EnteringPin == true && ClerkedIn == false && (EnteredPin == EmployeePin[EmployeeName[ClerkId]])) {
+				SetDisplay('customer-display-upper', EmployeeName[ClerkId]);
+				SetDisplay('customer-display-lower', ClerkId + "      000"); //todo:fix this spacing kludge
+				PrintReceiptHeader(EmployeeName[ClerkId]);
+				ClerkedIn = true;
+			}
+			break;
+		case "Subtotal" :
+			break;
+		case "PAY CASH" :
+			break;
+		default :
+			//Some other key--don't worry about it?
+	}
+}
 function InArray(Element, Array) {
     for (var i in Array) {
 		if (i === Element) {
@@ -93,58 +211,21 @@ function InArray(Element, Array) {
 		}
 	}
 	return false;
+}	
+function AppendDisplay(DisplayName, HTML) {
+    document.getElementById(DisplayName).innerHTML += HTML;
 }
-
-function PressKey(KeyId) {
-	if (ErrorState == true) {
-	    if (KeyId == "Clear") {
-		    ErrorState = false;
-			StopErrorTone();
-		}
-		else {
-		//do nothing
-		}
-	}
-	else {//ErrorState == False
-	    //check if it's a number key or item key
-		if (InArray(KeyId, NumKeyIds)) {
-			//do number key stuff
-			if (EnteringPin == true) {
-				AppendCustomerDisplay("*");
-			}
-			else {
-				AppendCustomerDisplay("")//todo:appropriate number here
-			}
-		}
-		else {
-			if (InArray(KeyId, ItemKeyIds)) {
-			//do item key stuff
-			}
-			else {
-				switch(KeyId) {
-					case "PIN/CHECK" :
-						
-						break;
-					default :
-						//Some other key--don't worry about it?
-				}
-			}
-		}
-	}
+function SetDisplay(DisplayName, HTML) {
+    document.getElementById(DisplayName).innerHTML = HTML;
 }
-
-	
-function AppendCustomerDisplay(Text) {
-    document.getElementById('customer-display').innerHTML += Text;
+function ClearDisplay(DisplayName) {
+    document.getElementById(DisplayName).innerHTML = "";
 }
-function SetCustomerDisplay(Text) {
-    document.getElementById('customer-display').innerHTML = Text;
-}
-function ClearCustomerDisplay() {
-    document.getElementById('customer-display').innerHTML = "";
-}
-function AppendReceipt(Text) {
-    document.getElementById('receipt').innerHTML += Text;
+function PrintReceiptHeader(EmployeeName) {
+	AppendDisplay('receipt', '<p class="receipt-header">MEDIA SERVICES<br>Olin Hall room 032<br>507 933 7459<br>mediaservices@gac.edu</p>');
+	d = new Date();
+	DateStr = getMonth() + "-" + d.getDate() + "-" + d.getFullYear();
+	AppendDisplay('receipt', '<p class="receipt-clerkin">'+DateStr+'&nbsp;&nbsp;&nbsp;&nbsp;MC #:0000<br>'+EmployeeName+'</p>');
 }
 
 function PlayErrorTone() {
@@ -169,7 +250,6 @@ function stop_single_sound() {
 	<audio id="audiotag1" autobuffer="autobuffer"><source src="cash_reg_5sec_error_tone_3kHz.wav" type="audio/wav"></audio>
 
 	<p>
-
 		<a href="javascript:play_single_sound();">Play 5-sec sound on single channel</a>
 		<a href="javascript:stop_single_sound();">Stop 5-sec sound on single channel</a>
 	</p>
@@ -179,21 +259,18 @@ function stop_single_sound() {
 	<tr>
 		<td> 
 			<div id="receipt">
-
 			<p class="receipt-header">MEDIA SERVICES<br>Olin Hall room 032<br>507 933 7459<br>mediaservices@gac.edu</p>
 			<p class="receipt-clerkin">01-01-2011&nbsp;&nbsp;&nbsp;&nbsp;MC #:0000<br>ZAPHOD B</p>
 			<p class="receipt-items">PASSPORT *5.00T1</p>
 			<p class="receipt-totals">------------------------<br><b>TOTAL</b>*5.34<br>AMOUNT *6.00<br>CHANGE *0.66</p>
-
 			<p class="receipt-timestamp">PM 3-31   ****</p>
 			<p class="receipt-footer">Thank you for visiting! <br>Please let us know how <br>we are doing.</p>
 			</div>
 		</td>
 		<td>
-			<div id="customer-display">
-			HELLO
-			</div>
-
+			<div id="customer-display-upper">HELLO</div>
+			<br>
+			<div id="customer-display-lower">TEST</div>
 		</td>
 	</tr>
 	</form>
@@ -204,7 +281,6 @@ function stop_single_sound() {
 		<td>
 			<table id="AuxiliaryKeys" border="1" align=center>
 				<tr>
-
 					<td><button style="width:60px;height:60px;background-color:white">Feed</button></td>
 					<td><button style="width:60px;height:60px;background-color:orange;color:white">Clerk<br>ID</button></td>
 					<td><button style="width:60px;height:60px">Shift</button></td>
@@ -212,13 +288,11 @@ function stop_single_sound() {
 			</table>
 		</td>
 		<td>
-
 			<table id="FeeKeys" border="1">
 				<tr>
 					<td><button class="fee-key">5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E/Y<br>FAB6<br>Surcharg</button></td>
 					<td><button class="fee-key">10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;J<br>Preflight<br>Fee</button></td>
 					<td><button class="fee-key">15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O</button></td>
-
 					<td><button class="fee-key">20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T</button></td>
 				</tr>
 			</table>
@@ -227,7 +301,6 @@ function stop_single_sound() {
 			<table id="TaxKeys" border="1" align=center>
 				<tr>
 					<td><button style="width:60px;height:60px">Tax1</button></td>
-
 					<td><button style="width:60px;height:60px">Tax2</button></td>
 				</tr>
 			</table>
@@ -236,20 +309,17 @@ function stop_single_sound() {
 	<tr>
 		<td>
 			<table id="CommandKeys" border="1" align=center>
-
 				<tr>
 					<td><button style="width:60px;height:60px">Coupon</button></td>
 					<td><button style="width:60px;height:60px;background-color:yellow">Entered&nbsp;Itm<br>Quantity<br>QTY</button></td>
 				</tr>
 				<tr>
 					<td><button style="width:60px;height:60px">Account<br>Receive</button></td>
-
 					<td><button style="width:60px;height:60px">Account<br>Pay&nbsp;Out</button></td>
 				</tr>
 				<tr>
 					<td><button style="width:60px;height:60px">Alternate<br>PLU<br>Price</button></td>
 					<td><button style="width:60px;height:60px">PLU</button></td>
-
 				</tr>
 				<tr>
 					<td><button style="width:60px;height:60px;background-color:white">Clear</button></td>
@@ -258,43 +328,37 @@ function stop_single_sound() {
 			</table>
 		</td>
 		<td>
-
 			<table id="NumberKeys" border="1" cellspacing="15"align=center>
 				<tr>
-					<td><button class="number-key" onClick="AppendCustomerDisplay('7')">7</button></td>
-					<td><button class="number-key" onClick="AppendCustomerDisplay('8')">8</button></td>
-					<td><button class="number-key" onClick="AppendCustomerDisplay('9')">9</button></td>
+					<td><button class="number-key" onClick="PressKey('7')">7</button></td>
+					<td><button class="number-key" onClick="PressKey('8')">8</button></td>
+					<td><button class="number-key" onClick="PressKey('9')">9</button></td>
 				</tr>
 				<tr>
-
-					<td><button class="number-key" onClick="AppendCustomerDisplay('4')">4</button></td>
-					<td><button class="number-key" onClick="AppendCustomerDisplay('5')">5</button></td>
-					<td><button class="number-key" onClick="AppendCustomerDisplay('6')">6</button></td>
+					<td><button class="number-key" onClick="PressKey('4')">4</button></td>
+					<td><button class="number-key" onClick="PressKey('5')">5</button></td>
+					<td><button class="number-key" onClick="PressKey('6')">6</button></td>
 				</tr>
 				<tr>
-					<td><button class="number-key" onClick="AppendCustomerDisplay('1')">1</button></td>
-					<td><button class="number-key" onClick="AppendCustomerDisplay('2')">2</button></td>
-
-					<td><button class="number-key" onClick="AppendCustomerDisplay('3')">3</button></td>
+					<td><button class="number-key" onClick="PressKey('1')">1</button></td>
+					<td><button class="number-key" onClick="PressKey('2')">2</button></td>
+					<td><button class="number-key" onClick="PressKey('3')">3</button></td>
 				</tr>
 				<tr>
-					<td><button class="number-key" onClick="AppendCustomerDisplay('0')">0</button></td>
-					<td><button class="number-key" onClick="AppendCustomerDisplay('00')">00</button></td>
+					<td><button class="number-key" onClick="PressKey('0')">0</button></td>
+					<td><button class="number-key" onClick="PressKey('00')">00</button></td>
 					<td></td>
 				</tr>
-
 			</table>
 		</td>
 		<td>
 			<table id="DepartmentKeys" border="1" align=center>
 				<tr>
-					<td><button class="dept-key">4&nbsp;&nbsp;&nbsp;&nbsp;D/X<br>Set&nbsp;of&nbsp;2<br>Passport<br>Photos</button></td>
-
+					<td><button class="dept-key" onClick="PressKey('PASSPORT','4')>4&nbsp;&nbsp;&nbsp;&nbsp;D/X<br>Set&nbsp;of&nbsp;2<br>Passport<br>Photos</button></td>
 					<td><button class="dept-key">9&nbsp;&nbsp;&nbsp;&nbsp;I<br>DVD<br>Authorin</button></td>
 					<td><button class="dept-key">14&nbsp;&nbsp;&nbsp;&nbsp;N<br>COFFEE</button></td>
 					<td><button class="dept-key">19&nbsp;&nbsp;&nbsp;&nbsp;S</button></td>
 				</tr>
-
 				<tr>
 					<td><button class="dept-key">
 							<table id="twelve-inch-laminate-button">
@@ -303,14 +367,12 @@ function stop_single_sound() {
 								</tr>
 								<tr>
 									<td class="blue-label" style="background-color:blue;font-size:10px">12"<br>Laminate</td>
-
 								</tr>
 							</table>
 						</button>
 					</td>
 					<td><button class="dept-key">8&nbsp;&nbsp;&nbsp;&nbsp;H<br>DVD<br>Duplicat.</button></td>
 					<td><button class="dept-key">13&nbsp;&nbsp;&nbsp;&nbsp;M<br>DVD<br>Menu</button></td>
-
 					<td><button class="dept-key">18&nbsp;&nbsp;&nbsp;&nbsp;R</button></td>
 				</tr>
 				<tr>
@@ -318,7 +380,6 @@ function stop_single_sound() {
 							<table id="twenty-six-inch-laminate-button">
 								<tr>
 									<td class="header" style="font-size:10px">2&nbsp;&nbsp;&nbsp;&nbsp;B/V</td>
-
 								</tr>
 								<tr>
 									<td class="blue-label" style="background-color:blue;font-size:10px">26"<br>Laminate</td>
@@ -327,13 +388,11 @@ function stop_single_sound() {
 						</button>
 					</td>
 					<td><button class="dept-key">7&nbsp;&nbsp;&nbsp;&nbsp;G<br>CD<br>Duplicat.</button></td>
-
 					<td><button class="dept-key">12&nbsp;&nbsp;&nbsp;&nbsp;L<br>Power<br>Tabs<br>(Grommets)</button></td>
 					<td><button class="dept-key">17&nbsp;&nbsp;&nbsp;&nbsp;Q</button></td>
 				</tr>
 				<tr>
 					<td>
-
 						<button class="dept-key">
 							<table id="large-format-printing-button">
 								<tr>
@@ -341,7 +400,6 @@ function stop_single_sound() {
 								</tr>
 								<tr>
 									<td class="green-label" style="background-color:green;font-size:10px;color=white;">Lrg&nbsp;Fmt.<br>Printing<br>(Price)</td>
-
 								</tr>
 							</table>
 						</button>
@@ -351,7 +409,6 @@ function stop_single_sound() {
 							<table id="late_fee_button">
 								<tr>
 									<td class="header" style="font-size:10px">6&nbsp;&nbsp;&nbsp;&nbsp;F/Z</td>
-
 								</tr>
 								<tr>
 									<td class="green-label" style="background-color:green;font-size:10px;color=white;">Late<br>Fee</td>
@@ -360,7 +417,6 @@ function stop_single_sound() {
 						</button>
 					</td>
 					<td>
-
 						<button class="dept-key">
 							<table id="usage_fee_button">
 								<tr>
@@ -368,7 +424,6 @@ function stop_single_sound() {
 								</tr>
 								<tr>
 									<td class="green-label" style="background-color:green;font-size:10px;color=white;">Usage<br>Fee</td>
-
 								</tr>
 							</table>
 						</button>
@@ -377,7 +432,6 @@ function stop_single_sound() {
 				</tr>
 			</table>
 		</td>
-
 		<td>
 			<table id="PaymentKeys" border="1" align=center>
 				<tr>
@@ -385,21 +439,18 @@ function stop_single_sound() {
 					<td><button class="payment-key" style="background-color:red;color:white">PIN<hr>CHECK</button></td>
 				</tr>
 				<tr>
-
 					<td><button class="payment-key">Return</button></td>
 					<td><button class="payment-key">Charge</button></td>
 				</tr>
 				<tr>
 					<td><button class="payment-key" style="background-color:red;color:white">Sub<br>total</button></td>
 					<td><button class="payment-key">Items<br>Subtotal<br>No&nbsp;Sale</button></td>
-
 				</tr>
 				<tr>
 					<td colspan="2"><button class="total-key" onclick="javascript:play_single_sound();">Amount&nbsp;Tend&nbsp;Total<br>PAY&nbsp;CASH</button></td>
 				</tr>
 			</table>
 		</td>
-
 	</tr>
 </table>
 </body>
