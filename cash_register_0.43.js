@@ -14,64 +14,64 @@ http://www.elated.com/articles/working-with-dates/
 http://www.elated.com/articles/html5-audio/
 ***********************************************************************/
 var EmployeeName = new Array();
-EmployeeName[1]="MXXX DXXXXXXXXX";
-EmployeeName[2]="MXXXXX BXXXXXX";
-EmployeeName[3]="NXXXXXXXX BXXXXX";
-EmployeeName[4]="PXXXX DXXXXXXX";
-EmployeeName[5]="AXXX EXXXX";
-EmployeeName[6]="BXXXXXX FXXXX";
-EmployeeName[7]="CXXX GXXXXX";
-EmployeeName[8]="JXXXX HXXX";
-EmployeeName[9]="EXXX HXXXXXXXX";
-EmployeeName[10]="AXXXXX HXXXXXXXX";
-EmployeeName[11]="JXXXXX HXXXXXXXXXX";
-EmployeeName[12]="GXXXXXX HXXXXXX";
-EmployeeName[13]="MXXXX HXXXXXXX";
-EmployeeName[14]="MXXXXXX HXXXXXXX";
-EmployeeName[15]="AXXXXX HXXXXX";
-EmployeeName[16]="DXXX JXXXXX";
-EmployeeName[17]="EXXX LXXXXX";
-EmployeeName[18]="MXXXXXXX RXXXXXX";
-EmployeeName[19]="TXXXX RXXX";
-EmployeeName[20]="KXXX RXXXX";
-EmployeeName[21]="JXXX SXXXXXX";
-EmployeeName[22]="HXXXXXX TXXXXXX";
-EmployeeName[23]="KXXXXX WXXXXX";
-EmployeeName[24]="JXXXXXXX WXXXXXX";
-EmployeeName[25]="BXXX XXXXX";
+EmployeeName[1] = "MXXX DXXXXXXXXX";
+EmployeeName[2] = "MXXXXX BXXXXXX";
+EmployeeName[3] = "NXXXXXXXX BXXXXX";
+EmployeeName[4] = "PXXXX DXXXXXXX";
+EmployeeName[5] = "AXXX EXXXX";
+EmployeeName[6] = "BXXXXXX FXXXX";
+EmployeeName[7] = "CXXX GXXXXX";
+EmployeeName[8] = "JXXXX HXXX";
+EmployeeName[9] = "EXXX HXXXXXXXX";
+EmployeeName[10] = "AXXXXX HXXXXXXXX";
+EmployeeName[11] = "JXXXXX HXXXXXXXXXX";
+EmployeeName[12] = "GXXXXXX HXXXXXX";
+EmployeeName[13] = "MXXXX HXXXXXXX";
+EmployeeName[14] = "MXXXXXX HXXXXXXX";
+EmployeeName[15] = "AXXXXX HXXXXX";
+EmployeeName[16] = "DXXX JXXXXX";
+EmployeeName[17] = "EXXX LXXXXX";
+EmployeeName[18] = "MXXXXXXX RXXXXXX";
+EmployeeName[19] = "TXXXX RXXX";
+EmployeeName[20] = "KXXX RXXXX";
+EmployeeName[21] = "JXXX SXXXXXX";
+EmployeeName[22] = "HXXXXXX TXXXXXX";
+EmployeeName[23] = "KXXXXX WXXXXX";
+EmployeeName[24] = "JXXXXXXX WXXXXXX";
+EmployeeName[25] = "BXXX XXXXX";
 
 var EmployeePin = new Array();
-EmployeePin[1]="123";
-EmployeePin[2]="123";
-EmployeePin[3]="123";
-EmployeePin[4]="123";
-EmployeePin[5]="123";
-EmployeePin[6]="123";
-EmployeePin[7]="123";
-EmployeePin[8]="123";
-EmployeePin[9]="123";
-EmployeePin[10]="123";
-EmployeePin[11]="123";
-EmployeePin[12]="123";
-EmployeePin[13]="123";
-EmployeePin[14]="123";
-EmployeePin[15]="123";
-EmployeePin[16]="123";
-EmployeePin[17]="123";
-EmployeePin[18]="123";
-EmployeePin[19]="123";
-EmployeePin[20]="123";
-EmployeePin[21]="123";
-EmployeePin[22]="123";
-EmployeePin[23]="123";
-EmployeePin[24]="123";
-EmployeePin[25]="123";
+EmployeePin[1] = "123";
+EmployeePin[2] = "123";
+EmployeePin[3] = "123";
+EmployeePin[4] = "123";
+EmployeePin[5] = "123";
+EmployeePin[6] = "123";
+EmployeePin[7] = "123";
+EmployeePin[8] = "123";
+EmployeePin[9] = "123";
+EmployeePin[10] = "123";
+EmployeePin[11] = "123";
+EmployeePin[12] = "123";
+EmployeePin[13] = "123";
+EmployeePin[14] = "123";
+EmployeePin[15] = "123";
+EmployeePin[16] = "123";
+EmployeePin[17] = "123";
+EmployeePin[18] = "123";
+EmployeePin[19] = "123";
+EmployeePin[20] = "123";
+EmployeePin[21] = "123";
+EmployeePin[22] = "123";
+EmployeePin[23] = "123";
+EmployeePin[24] = "123";
+EmployeePin[25] = "123";
 
 var ItemCost = 0.0;
 var ItemTax = 0.0;
 var TotalNoTax = 0.0;
-var TotalTax = 0.0
-var TotalCost = 0.0
+var TotalTax = 0.0;
+var TotalCost = 0.0;
 var Qty = 0; //Everything in JS is floating point, sadly
 var ErrorState = false;
 var EnteringPin = false;
@@ -87,6 +87,7 @@ var DeptKeyIds = ['PRINTING','26" LAMINA','12" LAMINA','PASSPORT','FAB 6 SURC','
 var CommandKeyIds = ['Clear','Void','QTY'];
 var PaymentKeyIds = ['PIN/CHECK','Subtotal','PAY CASH'];
 var AuxiliaryKeys = ['Feed','Clerk ID'];
+var NoTaxKeys = ['LATE FEE','USAGE FEES','COFFEE'];
 var FeeKeys = []; //todo: make these keys do something
 var TaxKeys = []; //todo: make these keys do something
 var KeyLog = []; //starts out with no keys
@@ -103,7 +104,7 @@ var TaxRate = 0.06875;
 var ItemPrice = new Array();
 ItemPrice['PRINTING']='0.50';
 ItemPrice['26" LAMINA']='1.50'; //todo:find this out
-ItemPrice['12" LAMINA']='0.15';
+ItemPrice['12" LAMINA']='0.75';
 ItemPrice['PASSPORT']='5.00';
 ItemPrice['FAB 6 SURC']='25.00';
 ItemPrice['LATE FEE']='0.12';
@@ -147,8 +148,9 @@ ReceiptSecondHalf['POWERTABS']='T1</span>';
 ReceiptSecondHalf['DVD MENU']='T1</span>';
 ReceiptSecondHalf['COFFEE']='&nbsp;&nbsp;</span>';
 function InArray(Element, Array) {
-    for (var i in Array) {
-        if (Array[i] == Element) {
+    var i;
+    for (i in Array) {
+        if (Array[i] === Element) {
             return true;
         }
     }
@@ -231,7 +233,7 @@ function PrintReceiptTotals(PaymentType, Total, AmountPaid, Change) {
 }
 function PrintReceiptFooter() {
     var now = new Date();
-    var TimeStamp = ""
+    var TimeStamp = "";
     if (now.getHours < 12) TimeStamp+="AM ";
     else                   TimeStamp+="PM ";
     TimeStamp += (now.getHours() % 12) + "-" + now.getMinutes();
@@ -263,6 +265,7 @@ function Checkout(PaymentType) {
     }
     if (Received < TotalCost) {
         ThrowCashRegError('ERR'); //TODO: check what the actual error is
+        alert("Insufficient amount tendered.");
     }
     else {
         var Change = Received - TotalCost;
@@ -283,11 +286,11 @@ function CloseCashDrawer() {
     //also, check concurrency issues
     ClerkedIn = false;
     AcceptableKeyIds = ClerkingInKeys;
-    KeyLog = []
+    KeyLog = [];
 }
 function PressKey(KeyId, KeyNum) {
     KeyLog.push(KeyId);
-    if (KeyId == "Clear Receipt") {
+    if (KeyId === "Clear Receipt") {
         ClearDisplay('receipt');
         return true;
     }
@@ -298,7 +301,7 @@ function PressKey(KeyId, KeyNum) {
         KeyNum = "";
     }
     if (ErrorState === true) {
-        if (KeyId == "Clear") {
+        if (KeyId === "Clear") {
             ErrorState = false;
             StopErrorTone();
             ClearDisplay('customer-display-upper');
@@ -316,7 +319,8 @@ function PressKey(KeyId, KeyNum) {
         }
     }
     if ( !InArray(KeyId, AcceptableKeyIds) ) {
-        ThrowCashRegError('ERROR')
+        ThrowCashRegError('ERROR');
+        alert("The '"+KeyId+"' key is not acceptable in this situation.");
         return false;
     }
 
@@ -353,14 +357,17 @@ function PressKey(KeyId, KeyNum) {
             ItemCost = parseFloat(ItemPrice[KeyId]) * Qty;
             SetDisplay('customer-display-lower-right',ItemPrice[KeyId]);
         }
-        if (AddTax === true) {
+        if (AddTax === true && InArray(KeyId, NoTaxKeys) === false) {
             ItemTax = ItemCost * TaxRate;
         }
-        if (VoidMode == true) {
+        else {
+            ItemTax = 0;
+        }
+        if (VoidMode === true) {
             //TODO: make VoidReceiptItem function that behaves differently
             PrintReceiptItem(KeyId, -1*ItemCost);
             TotalNoTax -= ItemCost;
-            if (AddTax === true) {
+            if (AddTax === true && InArray(KeyId, NoTaxKeys) === false) {
                 TotalTax -= ItemTax;
             }
             VoidMode = false;
@@ -368,7 +375,7 @@ function PressKey(KeyId, KeyNum) {
         else {
             PrintReceiptItem(KeyId, ItemCost);
             TotalNoTax += ItemCost;
-            if (AddTax === true) {
+            if (AddTax === true && InArray(KeyId, NoTaxKeys) == false) {
                 TotalTax += ItemTax;
             }
         }
@@ -381,7 +388,7 @@ function PressKey(KeyId, KeyNum) {
                 PrintReceiptRightAlign(Qty+'x');
             }
             else {
-                ThrowCashRegError('ERROR')
+                ThrowCashRegError('ERROR');
                 alert("Previous key was not a number.");
                 return false;
             }
@@ -396,7 +403,7 @@ function PressKey(KeyId, KeyNum) {
         case "Void" :
             //todo: figure out this whole business 
             AppendDisplay('receipt', 'VOID/CORR<br>');
-            if (PrevKeyId == "Clear") {
+            if (PrevKeyId === "Clear") {
                 SetDisplay('customer-display-upper', 'VOID/CORR');
                 VoidMode = true; //Now, when an item is entered, it will void it instead
             }
@@ -418,6 +425,7 @@ function PressKey(KeyId, KeyNum) {
         case "Non-tax":
             AddTax = false;
             TotalTax = 0.0;
+            break;
             //This appears to be a global effect, i.e. no tax for the whole shebang.
             //TODO: check if it can be applied item by item.
         case "Clerk ID" :
@@ -448,6 +456,7 @@ function PressKey(KeyId, KeyNum) {
                 if (EnteringPin === true && ClerkedIn === false && (EnteredPin !== EmployeePin[ClerkId])) {
                         EnteringPin = false;
                         ThrowCashRegError('RE-CLERKB');
+                        alert("Wrong clerk ID number");
                         return false;
                 }
                 else {

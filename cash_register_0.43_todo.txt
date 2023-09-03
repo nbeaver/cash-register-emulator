@@ -1,0 +1,15 @@
+figure out why the "clear receipt" and "debug" buttons refresh the page
+
+
+Behavior checks--to check with actual register.
+Before clerking in:
+press clerk id without any number entered
+press subtotal without clerking in
+press clear key
+
+While ringing up:
+Can all keys use Qty or literal cost input?
+What is 26" lamination cost?
+What if the amount tendered is not enough?
+What if you void more items than have been rung up?
+
