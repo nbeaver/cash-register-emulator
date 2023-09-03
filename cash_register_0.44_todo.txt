@@ -12,4 +12,4 @@ Can all keys use Qty or literal cost input?
 What is 26" lamination cost?
 What if the amount tendered is not enough?
 What if you void more items than have been rung up?
-
+What if you press a number, then a department key (not Qty)?

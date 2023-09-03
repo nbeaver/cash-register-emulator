@@ -254,11 +254,16 @@ function ThrowCashRegError(ErrorName) {
     SetDisplay('customer-display-lower-left', '.E');
     PlayErrorTone();
 }
+function RoundUp(Num, Decimals) {
+    var ScaleFactor = Math.pow(10, Decimals);
+    return Math.ceil(Num * ScaleFactor) / ScaleFactor;
+}
 function Checkout(PaymentType) {
     //calculate change, update displays and receipt, clock out
     var Received = ParseDollars();
     if (AddTax === true) {
-        TotalCost = TotalNoTax + TotalTax;
+        //Add on tax, rounded to 2 decimal places
+        TotalCost = TotalNoTax + RoundUp(TotalTax, 2);
     }
     else {
         TotalCost = TotalNoTax;
@@ -384,7 +389,7 @@ function PressKey(KeyId, KeyNum) {
     switch(KeyId) {//todo: set acceptable key ids for clear
         case "QTY" :
             if (InArray(PrevKeyId,NumKeyIds)) {
-                Qty = parseInt(PrevKeyId);
+                Qty = parseNum();
                 PrintReceiptRightAlign(Qty+'x');
             }
             else {
