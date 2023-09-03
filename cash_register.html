@@ -276,6 +276,10 @@ function PressKey(KeyId, KeyNum) {
 	    if (KeyId == "Clear") {
 		    ErrorState = false;
 			StopErrorTone();
+			ClearDisplay('customer-display-upper');
+			ClearDisplay('customer-display-lower-left');
+			ClearDisplay('customer-display-lower-right');
+			EnteredPin = "";
 			return true;
 		}
 		else {
@@ -366,12 +370,14 @@ function PressKey(KeyId, KeyNum) {
 			}
 			break;
 		case "Subtotal" :
-			SetDisplay('customer-display-upper', 'SUBTTL');
-			SetDisplay('customer-display-lower-left','.S');
-			SetDisplay('customer-display-lower-right',TotalCost.toFixed(2));
-			//print out the current total; do nothing to receipt
-			//SUBTTL
-			//.S 106.91
+			if (ClerkedIn === true) {
+				SetDisplay('customer-display-upper', 'SUBTTL');
+				SetDisplay('customer-display-lower-left','.S');
+				SetDisplay('customer-display-lower-right',TotalCost.toFixed(2));
+				//print out the current total; do nothing to receipt
+				//SUBTTL
+				//.S 106.91
+			}
 			break;
 		case "PAY CASH" :
 			if (ClerkedIn === true) {
@@ -393,7 +399,7 @@ function stop_single_sound() {
 }
 */
 </script> 
-<title>Media Services Cash Register Emulator v0.35</title>
+<title>Media Services Cash Register Emulator v0.36</title>
 </head>
 <body>
 <noscript>This emulator uses Javascript. Your browser either doesn't support Javascript or you have it turned off.</noscript>
