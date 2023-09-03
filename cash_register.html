@@ -111,6 +111,8 @@ var EnteringPin = false;
 var ClerkedIn = false;
 var ClerkId = 0;
 var EnteredPin = "";
+var PrevKeyId = "";
+var NextPrevKeyId = "";
 var AcceptableKeyIds = new Array();
 var NumKeyIds = ["1","2","3","4","5","6","7","8","9","0","00"];
 var ItemKeyIds = ['PRINTING','26" LAMINA','12" LAMINA','PASSPORT','FAB 6 SURC','LATE FEE','CD DUPLICA','DVD DUPLIC','DVD AUTHOR','PREFLIGHT','USAGE FEES','POWERTABS','DVD MENU','COFFEE'];
@@ -179,6 +181,8 @@ function StopErrorTone() {
     document.getElementById('ErrorTone').stop();
 }
 function PressKey(KeyId, KeyNum) {
+	PrevKeyId = NextPrevKeyId; //I could do this at the end, but that would mean restructuring the whole flow
+	NextPrevKeyId = KeyId;
 	if (KeyNum === undefined) {//KeyNum is optional, since only dept-keys have them
 		KeyNum = "";
 	}
@@ -198,6 +202,7 @@ function PressKey(KeyId, KeyNum) {
 //		PlayErrorTone();
 //		return false;
 //	}
+
 	if (InArray(KeyId, NumKeyIds)) {//numerical keypad
 		if (EnteringPin === true) {
 			EnteredPin += KeyId;
@@ -385,7 +390,7 @@ function stop_single_sound() {
 					<td><button class="dept-key">19&nbsp;&nbsp;&nbsp;&nbsp;S</button></td>
 				</tr>
 				<tr>
-					<td><button class="dept-key" onClick="PressKey('12&quot;LAMINA','2')">
+					<td><button class="dept-key" onClick="PressKey('12&quot; LAMINA','2')">
 							<table id="twelve-inch-laminate-button">
 								<tr>
 									<td class="header" style="font-size:10px">3&nbsp;&nbsp;&nbsp;&nbsp;C/W</td>
@@ -401,7 +406,7 @@ function stop_single_sound() {
 					<td><button class="dept-key">18&nbsp;&nbsp;&nbsp;&nbsp;R</button></td>
 				</tr>
 				<tr>
-					<td><button class="dept-key" onClick="PressKey('26&quot;LAMINA','3')">
+					<td><button class="dept-key" onClick="PressKey('26&quot; LAMINA','3')">
 							<table id="twenty-six-inch-laminate-button">
 								<tr>
 									<td class="header" style="font-size:10px">2&nbsp;&nbsp;&nbsp;&nbsp;B/V</td>
