@@ -1,0 +1,109 @@
+button.fee-key, button.payment-key, button.command-key, button.auxiliary-key, button.dept-key, button.tax-key, button.clerk-id-key
+{
+    width:60px;
+    height:60px;
+}
+button.dept-key
+{
+    font-size:10px;
+    background-color:white;
+}
+button.white-bg
+{
+    background-color:white;
+}
+button.yellow-bg
+{
+    background-color:yellow;
+}
+button.number-key
+{
+    width:40px;
+    height:40px;
+}
+button.clerk-id-key
+{
+    background-color:orange;
+    color:white
+}
+button.total-key
+{
+    width:160px;
+    height:60px;
+    background-color:red;
+    color:white;
+}
+button.cash-drawer
+{
+    width:800px;
+    height:60px;
+    font-size:30px;
+}
+#receipt 
+{
+    background-color:white;
+    height:300px;
+    width:210px;
+    font-family:monospace;
+    float:left;
+    overflow-y:scroll;
+}
+.receipt-header {text-align:center;}
+.receipt-clerkin {
+    text-align:left;
+    position:relative;
+}
+.receipt-items {
+    text-align:justify;
+    position:relative;
+}
+.receipt-totals {
+    text-align:justify;
+    position:relative;
+}
+.receipt-timestamp {text-align:right;}
+.receipt-right-align {text-align:right;}
+.receipt-footer {text-align:center;}
+
+/* from http://www.communitymx.com/content/article.cfm?cid=529b0 */
+.left-side {
+   position:absolute;
+   left: 0;
+   width: 50%;
+   }
+
+.right-side {
+   position:absolute;
+   right: 0;
+   width: 50%;
+   text-align:right; /* depends on element width */
+   } 
+#customer-display-upper
+{
+    height:70px;
+    width:500px;
+    color:green; 
+    background-color:black; 
+    font-size:300%; 
+    font-family:courier,monospace; 
+    white-space:nowrap; 
+    overflow:auto;
+    float:left;
+    text-align:left;
+}
+#customer-display-lower
+{
+    height:70px;
+    width:500px;
+    color:green; 
+    background-color:black; 
+    font-size:300%; 
+    font-family:courier,monospace; 
+    white-space:nowrap; 
+    overflow:auto;
+/*
+    float:right;
+    text-align:right;
+*/
+    position:relative;
+}
