@@ -1,0 +1,239 @@
+<html>
+<title>
+Media Services Cash Register Emulator
+</title>
+<head>
+<style type="text/css">
+button.dept-key
+{
+	font-size:10px;
+	width:60;
+	height:60;
+	background-color:white;
+}
+button.fee-key
+{
+	width:60;
+	height:60;
+}
+button.number-key
+{
+	width:40;
+	height:40;
+}
+button.payment-key
+{
+	width:60;
+	height:60;
+}
+</style>
+<script language="JavaScript" type="text/javascript">
+var Employees = new Array();
+Employees[0]="Zeroth Employee";
+Employees[1]="First Employee";
+Employees[2]="Second Employee";
+Employees[3]="Third Employee";
+
+var ID = new Array();
+ID["Zeroth Employee"]="123";
+var ErrorState = false;
+//var ReceiptStr = ""
+//var CustomerDisplayStr = "HELLO"
+
+function AppendCustomerDisplay(Text) {
+	document.CashRegisterDisplay.CustomerDisplay.value += Text;
+}
+function SetCustomerDisplay(Text) {
+	document.CashRegisterDisplay.CustomerDisplay.value = Text;
+}
+function ClearCustomerDisplay() {
+	document.CashRegisterDisplay.CustomerDisplay.value = "";
+}
+function AppendReceipt(Text) {
+	document.CashRegisterDisplay.Receipt.value += Text;
+}
+</script>
+<noscript>
+This emulator uses Javascript. Your browser either doesn't support Javascript or you have it turned off.
+</noscript> 
+</head>
+<body>
+<form name="CashRegisterDisplay">
+	<textarea name="Receipt" style="font-family:monospace; white-space:nowrap; overflow:auto;" cols="24" rows="5" READONLY></textarea>
+	<textarea name="CustomerDisplay" style="color:green; background-color:black; font-size:300%; font-family:courier,monospace; white-space:nowrap; overflow:auto;" cols="24" rows="1" READONLY></textarea>
+</form>
+<br>
+<table id="CashRegisterKeyboard" border="1" align=left>
+	<tr>
+		<td></td>
+		<td>
+			<table id="AuxiliaryKeys" border="1" align=center>
+				<tr>
+					<td><button style="width:60;height:60;background-color:white">Feed</button></td>
+					<td><button style="width:60;height:60;background-color:orange;color:white">Clerk<br>ID</button></td>
+					<td><button style="width:60;height:60">Shift</button></td>
+				</tr>
+			</table>
+		</td>
+		<td>
+			<table id="FeeKeys" border="1">
+				<tr>
+					<td><button class="fee-key">5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E/Y<br>FAB6<br>Surcharg</button></td>
+					<td><button class="fee-key">10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;J<br>Preflight<br>Fee</button></td>
+					<td><button class="fee-key">15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O</button></td>
+					<td><button class="fee-key">20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T</button></td>
+				</tr>
+			</table>
+		</td>
+		<td>	
+			<table id="TaxKeys" border="1" align=center>
+				<tr>
+					<td><button style="width:60;height:60">Tax1</button></td>
+					<td><button style="width:60;height:60">Tax2</button></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table id="CommandKeys" border="1" align=center>
+				<tr>
+					<td><button style="width:60;height:60">Coupon</button></td>
+					<td><button style="width:60;height:60;background-color:yellow">Entered&nbsp;Itm<br>Quantity<br>QTY</td>
+				</tr>
+				<tr>
+					<td><button style="width:60;height:60">Account<br>Receive</button></td>
+					<td><button style="width:60;height:60">Account<br>Pay&nbsp;Out</button></td>
+				</tr>
+				<tr>
+					<td><button style="width:60;height:60">Alternate<br>PLU<br>Price</button></td>
+					<td><button style="width:60;height:60">PLU</button></td>
+				</tr>
+				<tr>
+					<td><button style="width:60;height:60;background-color:white">Clear</td>
+					<td><button style="width:60;height:60;background-color:white">Void</td>
+				</tr>
+			</table>
+		</td>
+		<td>
+			<table id="NumberKeys" border="1" cellspacing="15"align=center>
+				<tr>
+					<td><button class="number-key" onClick="AppendCustomerDisplay('7')">7</button></td>
+					<td><button class="number-key" onClick="AppendCustomerDisplay('8')">8</button></td>
+					<td><button class="number-key" onClick="AppendCustomerDisplay('9')">9</button></td>
+				</tr>
+				<tr>
+					<td><button class="number-key" onClick="AppendCustomerDisplay('4')">4</button></td>
+					<td><button class="number-key" onClick="AppendCustomerDisplay('5')">5</button></td>
+					<td><button class="number-key" onClick="AppendCustomerDisplay('6')">6</button></td>
+				</tr>
+				<tr>
+					<td><button class="number-key" onClick="AppendCustomerDisplay('1')">1</button></td>
+					<td><button class="number-key" onClick="AppendCustomerDisplay('2')">2</button></td>
+					<td><button class="number-key" onClick="AppendCustomerDisplay('3')">3</button></td>
+				</tr>
+				<tr>
+					<td><button class="number-key" onClick="AppendCustomerDisplay('0')">0</button></td>
+					<td><button class="number-key" onClick="AppendCustomerDisplay('00')">00</button></td>
+					<td></td>
+				</tr>
+			</table>
+		</td>
+		<td>
+			<table id="DepartmentKeys" border="1" align=center>
+				<tr>
+					<td><button class="dept-key">4&nbsp;&nbsp;&nbsp;&nbsp;D/X<br>Set&nbsp;of&nbsp;2<br>Passport<br>Photos</button></td>
+					<td><button class="dept-key">9&nbsp;&nbsp;&nbsp;&nbsp;I<br>DVD<br>Authorin</button></td>
+					<td><button class="dept-key">14&nbsp;&nbsp;&nbsp;&nbsp;N<br>COFFEE</button></td>
+					<td><button class="dept-key">19&nbsp;&nbsp;&nbsp;&nbsp;S</button></td>
+				</tr>
+				<tr>
+					<td><button class="dept-key">
+							<table id="12-inch-laminate-button">
+								<tr>
+									<td class="header" style="font-size:10px">3&nbsp;&nbsp;&nbsp;&nbsp;C/W</td>
+								</tr>
+								<tr>
+									<td class="blue-label" style="background-color:blue;font-size:10px">12"<br>Laminate</td>
+								</tr>
+							</table>
+						</button>
+					</td>
+					<td><button class="dept-key">8&nbsp;&nbsp;&nbsp;&nbsp;H<br>DVD<br>Duplicat.</button></td>
+					<td><button class="dept-key">13&nbsp;&nbsp;&nbsp;&nbsp;M<br>DVD<br>Menu</button></td>
+					<td><button class="dept-key">18&nbsp;&nbsp;&nbsp;&nbsp;R</button></td>
+				</tr>
+				<tr>
+					<td><button class="dept-key">
+							<table id="26-inch-laminate-button">
+								<tr>
+									<td class="header" style="font-size:10px">2&nbsp;&nbsp;&nbsp;&nbsp;B/V</td>
+								</tr>
+								<tr>
+									<td class="blue-label" style="background-color:blue;font-size:10px">26"<br>Laminate</td>
+								</tr>
+							</table>
+						</button>
+					</td>
+					<td><button class="dept-key">7&nbsp;&nbsp;&nbsp;&nbsp;G<br>CD<br>Duplicat.</button></td>
+					<td><button class="dept-key">12&nbsp;&nbsp;&nbsp;&nbsp;L<br>Power<br>Tabs<br>(Grommets)</button></td>
+					<td><button class="dept-key">17&nbsp;&nbsp;&nbsp;&nbsp;Q</button></td>
+				</tr>
+				<tr>
+					<td><button class="dept-key">
+							<table id="large-format-printing-button">
+								<tr>
+									<td class="header" style="font-size:10px">1&nbsp;&nbsp;&nbsp;&nbsp;A/U</td>
+								</tr>
+								<tr>
+									<td class="green-label" style="background-color:green;font-size:10px;color=white;">Lrg&nbsp;Fmt.<br>Printing<br>(Price)</td>
+								</tr>
+							</table>
+					</td>
+					<td><button class="dept-key">
+							<table id="late_fee_button">
+								<tr>
+									<td class="header" style="font-size:10px">6&nbsp;&nbsp;&nbsp;&nbsp;F/Z</td>
+								</tr>
+								<tr>
+									<td class="green-label" style="background-color:green;font-size:10px;color=white;">Late<br>Fee</td>
+								</tr>
+							</table>
+					</td>
+					<td><button class="dept-key">
+							<table id="usage_fee_button">
+								<tr>
+									<td class="header" style="font-size:10px">11&nbsp;&nbsp;&nbsp;&nbsp;K</td>
+								</tr>
+								<tr>
+									<td class="green-label" style="background-color:green;font-size:10px;color=white;">Usage<br>Fee</td>
+								</tr>
+							</table>
+					</td>
+					<td><button class="dept-key">16&nbsp;&nbsp;&nbsp;&nbsp;P</button></td>
+				</tr>
+			</table>
+		</td>
+		<td>
+			<table id="PaymentKeys" border="1" align=center>
+				<tr>
+					<td><button class="payment-key" style="width:60;height:60">Non-tax</button></td>
+					<td><button style="width:60;height:60;background-color:red;color:white">PIN<hr>CHECK</button></td>
+				</tr>
+				<tr>
+					<td><button style="width:60;height:60">Return</button></td>
+					<td><button style="width:60;height:60">Charge</button></td>
+				</tr>
+				<tr>
+					<td><button style="width:60;height:60;background-color:red;color:white">Sub<br>total</button></td>
+					<td><button style="width:60;height:60">Items<br>Subtotal<br>No&nbsp;Sale</button></td>
+				</tr>
+				<tr>
+					<td colspan="2"><button style="width:120;height:60;background-color:red;color:white">Amount&nbsp;Tend&nbsp;Total<br>PAY&nbsp;CASH</button></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</body>
+</html>
